@@ -548,6 +548,11 @@ textarea.form-input {
     min-height: 80px;
 }
 
+#jd-input {
+    height: 150px;
+    resize: none;
+}
+
 /* Keywords Display */
 .keywords-display {
     margin-top: 12px;

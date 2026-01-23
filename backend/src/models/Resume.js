@@ -201,7 +201,7 @@ const resumeSchema = new mongoose.Schema({
 });
 
 // Pre-save middleware to calculate word counts
-resumeSchema.pre('save', function (next) {
+resumeSchema.pre('save', async function () {
     // Calculate word count for each bullet
     const calculateWordCount = (bullet) => {
         if (bullet.rewritten) {
@@ -211,15 +211,17 @@ resumeSchema.pre('save', function (next) {
         }
     };
 
-    this.experience.forEach(exp => {
-        exp.bullets.forEach(calculateWordCount);
-    });
+    if (this.experience) {
+        this.experience.forEach(exp => {
+            if (exp.bullets) exp.bullets.forEach(calculateWordCount);
+        });
+    }
 
-    this.projects.forEach(proj => {
-        proj.bullets.forEach(calculateWordCount);
-    });
-
-    next();
+    if (this.projects) {
+        this.projects.forEach(proj => {
+            if (proj.bullets) proj.bullets.forEach(calculateWordCount);
+        });
+    }
 });
 
 module.exports = mongoose.model('Resume', resumeSchema);

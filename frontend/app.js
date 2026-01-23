@@ -11,7 +11,7 @@
 // CONFIGURATION
 // ============================================
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5050/api';
 
 // ============================================
 // GLOBAL STATE MANAGEMENT
@@ -485,7 +485,7 @@ async function analyzeJobDescription() {
     setLoading(elements.analyzeJdBtn, true);
 
     try {
-        const result = await api.analyzeJD(jdText);
+        const result = await api.analyzeJD(jdText, store.getState().resumeId);
 
         if (result.success) {
             store.setState(state => {
@@ -595,13 +595,23 @@ async function runMagicOptimization() {
                     }))
                 })),
                 education: state.education,
+                projects: state.projects || [],
                 skills: state.skills
             });
 
             if (createResult.success) {
                 resumeId = createResult.data._id;
                 store.setState(s => { s.resumeId = resumeId; return s; });
+            } else {
+                showToast(createResult.message || 'Failed to save resume for optimization', 'error');
+                return;
             }
+        }
+
+        // Final check for resumeId
+        if (!resumeId) {
+            showToast('Resume ID missing. Please try again.', 'error');
+            return;
         }
 
         // Run optimization
