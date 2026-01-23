@@ -13,7 +13,8 @@ const connectDB = async () => {
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (err) {
         console.error(`Error: ${err.message}`);
-        process.exit(1);
+        console.log('Running in generic mode without database connection.');
+        // process.exit(1); // Do not exit, allow server to run for static demo purposes
     }
 };
 

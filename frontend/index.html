@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Architect - Build ATS-Optimized Resumes</title>
+    <meta name="description"
+        content="Build ATS-friendly resumes in minutes using advanced artificial intelligence. Stand out from the crowd and land your dream job.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-glow"></div>
+
+    <!-- Landing Page -->
+    <div class="container" id="landing-page">
+        <header>
+            <nav>
+                <div class="logo">AI Resume Architect</div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How it Works</a>
+                    <a href="#" class="btn-secondary" id="nav-builder-btn">Open Builder</a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Craft Your Perfect Career<br>with <span class="gradient-text">AI Precision</span></h1>
+                    <p class="subtitle">Build ATS-friendly resumes in minutes using advanced artificial intelligence.
+                        Stand out from the crowd and land your dream job.</p>
+                    <div class="cta-group">
+                        <button class="btn-primary" id="start-btn">
+                            <span>✨</span> Get Started Now
+                        </button>
+                        <button class="btn-outline" id="demo-btn">See Demo</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features" id="features">
+                <div class="feature-card glass">
+                    <div class="icon">🎯</div>
+                    <h3>ATS Score Analysis</h3>
+                    <p>Get instant ATS compatibility scores and see exactly which keywords you're missing.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon">✨</div>
+                    <h3>AI Bullet Rewriter</h3>
+                    <p>Transform weak bullet points into powerful, keyword-optimized achievements.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon">🚀</div>
+                    <h3>Magic Optimization</h3>
+                    <p>One-click optimization that analyzes JD, rewrites bullets, and boosts your score.</p>
+                </div>
+            </section>
+
+            <section class="how-it-works" id="how-it-works">
+                <h2>How It <span class="gradient-text">Works</span></h2>
+                <div class="steps">
+                    <div class="step glass">
+                        <div class="step-number">1</div>
+                        <h3>Paste Job Description</h3>
+                        <p>Copy the JD you're targeting for AI analysis</p>
+                    </div>
+                    <div class="step glass">
+                        <div class="step-number">2</div>
+                        <h3>Build Your Resume</h3>
+                        <p>Enter your experience with live preview</p>
+                    </div>
+                    <div class="step glass">
+                        <div class="step-number">3</div>
+                        <h3>AI Optimization</h3>
+                        <p>Click Magic Button to boost ATS score</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Resume Builder App -->
+    <div class="builder-app hidden" id="builder-app">
+        <!-- Builder Header -->
+        <header class="builder-header">
+            <div class="builder-nav">
+                <button class="back-btn" id="back-to-landing">
+                    ← Back
+                </button>
+                <div class="logo">Resume Builder</div>
+                <div class="header-actions">
+                    <div class="ats-score-badge" id="ats-badge">
+                        <span class="score-label">ATS Score</span>
+                        <span class="score-value" id="ats-score-display">--</span>
+                    </div>
+                    <button class="btn-magic" id="magic-btn">
+                        ✨ Magic Optimize
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Split Screen Layout -->
+        <div class="builder-container">
+            <!-- Left Panel: Form -->
+            <div class="form-panel" id="form-panel">
+                <!-- JD Input Section -->
+                <div class="form-section glass">
+                    <div class="section-header">
+                        <h3>🎯 Target Job Description</h3>
+                        <button class="btn-sm btn-analyze" id="analyze-jd-btn">Analyze</button>
+                    </div>
+                    <textarea id="jd-input"
+                        placeholder="Paste the job description here to extract keywords and optimize your resume..."
+                        rows="4"></textarea>
+                    <div class="keywords-display hidden" id="keywords-display">
+                        <div class="keyword-category">
+                            <span class="category-label">Technical:</span>
+                            <div class="keyword-tags" id="tech-keywords"></div>
+                        </div>
+                        <div class="keyword-category">
+                            <span class="category-label">Tools:</span>
+                            <div class="keyword-tags" id="tool-keywords"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Info Section -->
+                <div class="form-section glass">
+                    <h3>👤 Personal Information</h3>
+                    <div class="form-grid">
+                        <input type="text" id="fullName" placeholder="Full Name" class="form-input">
+                        <input type="email" id="email" placeholder="Email" class="form-input">
+                        <input type="tel" id="phone" placeholder="Phone" class="form-input">
+                        <input type="text" id="location" placeholder="City, State" class="form-input">
+                        <input type="url" id="linkedin" placeholder="LinkedIn URL" class="form-input">
+                        <input type="url" id="github" placeholder="GitHub URL" class="form-input">
+                    </div>
+                    <textarea id="summary" placeholder="Professional Summary (AI can generate this)" rows="3"
+                        class="form-input full-width"></textarea>
+                    <button class="btn-sm btn-ai" id="generate-summary-btn">✨ Generate Summary</button>
+                </div>
+
+                <!-- Experience Section -->
+                <div class="form-section glass">
+                    <div class="section-header">
+                        <h3>💼 Experience</h3>
+                        <button class="btn-sm btn-add" id="add-experience-btn">+ Add</button>
+                    </div>
+                    <div id="experience-list">
+                        <!-- Experience items will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Education Section -->
+                <div class="form-section glass">
+                    <div class="section-header">
+                        <h3>🎓 Education</h3>
+                        <button class="btn-sm btn-add" id="add-education-btn">+ Add</button>
+                    </div>
+                    <div id="education-list">
+                        <!-- Education items will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="form-section glass">
+                    <h3>🛠️ Skills</h3>
+                    <div class="skills-input-group">
+                        <label>Technical Skills</label>
+                        <input type="text" id="technical-skills" placeholder="React, Node.js, Python (comma-separated)"
+                            class="form-input">
+                    </div>
+                    <div class="skills-input-group">
+                        <label>Tools & Technologies</label>
+                        <input type="text" id="tools-skills" placeholder="Git, Docker, AWS (comma-separated)"
+                            class="form-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Live Preview -->
+            <div class="preview-panel" id="preview-panel">
+                <div class="preview-header">
+                    <h3>📄 Live Preview</h3>
+                    <button class="btn-sm" id="download-btn">Download PDF</button>
+                </div>
+                <div class="resume-preview" id="resume-preview">
+                    <!-- Resume preview will be rendered here -->
+                    <div class="preview-placeholder">
+                        <p>Start filling in your details to see the live preview</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optimization Results Modal -->
+    <div class="modal-overlay" id="optimization-modal">
+        <div class="modal glass optimization-modal">
+            <button class="modal-close" id="close-optimization-modal">&times;</button>
+            <h2>✨ <span class="gradient-text">Optimization Results</span></h2>
+
+            <div class="score-comparison">
+                <div class="score-box">
+                    <span class="score-label">Before</span>
+                    <span class="score-number" id="before-score">--</span>
+                </div>
+                <div class="score-arrow">→</div>
+                <div class="score-box improved">
+                    <span class="score-label">After</span>
+                    <span class="score-number" id="after-score">--</span>
+                </div>
+            </div>
+
+            <div class="optimized-bullets" id="optimized-bullets">
+                <!-- Optimized bullets will be shown here -->
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="accept-all-btn">Accept All Changes</button>
+                <button class="btn-outline" id="review-changes-btn">Review Individually</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
