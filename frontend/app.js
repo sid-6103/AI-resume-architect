@@ -559,7 +559,7 @@ async function calculateATSScore() {
 }
 
 // ============================================
-// MAGIC BUTTON OPTIMIZATION
+// MAGIC BUTTON OPTIMIZATION (ENHANCED)
 // ============================================
 
 async function runMagicOptimization() {
@@ -577,6 +577,7 @@ async function runMagicOptimization() {
 
     setLoading(elements.magicBtn, true);
     elements.magicBtn.textContent = '✨ Optimizing...';
+    showToast('🚀 Starting AI optimization... This may take a moment.', 'info');
 
     try {
         // First, save the resume to get an ID
@@ -618,21 +619,60 @@ async function runMagicOptimization() {
         const result = await api.optimizeResume(resumeId, state.atsData.targetJD);
 
         if (result.success) {
-            // Update state with optimized bullets
+            // Update state with ALL optimized content
             store.setState(s => {
+                // Update all optimized bullets
                 result.data.optimizedBullets.forEach(opt => {
                     const exp = s.experience[opt.experienceIndex];
                     if (exp && exp.bullets[opt.bulletIndex]) {
                         exp.bullets[opt.bulletIndex].rewritten = opt.rewritten;
                         exp.bullets[opt.bulletIndex].isAIRewritten = true;
-                        exp.bullets[opt.bulletIndex].injectedKeywords = [opt.injectedKeyword];
+                        exp.bullets[opt.bulletIndex].accepted = true; // Auto-accept
+                        exp.bullets[opt.bulletIndex].injectedKeywords = opt.allInjectedKeywords || [opt.injectedKeyword];
+                        // Update original to show the rewritten version
+                        exp.bullets[opt.bulletIndex].original = opt.rewritten;
                     }
                 });
+
+                // Update summary if provided
+                if (result.data.summary) {
+                    s.personalInfo.summary = result.data.summary;
+                }
+
+                // Update skills with added ones
+                if (result.data.skillsAdded) {
+                    if (result.data.skillsAdded.technical && result.data.skillsAdded.technical.length > 0) {
+                        s.skills.technical = [...(s.skills.technical || []), ...result.data.skillsAdded.technical];
+                    }
+                    if (result.data.skillsAdded.tools && result.data.skillsAdded.tools.length > 0) {
+                        s.skills.tools = [...(s.skills.tools || []), ...result.data.skillsAdded.tools];
+                    }
+                }
+
+                // Update ATS data
                 s.atsData.atsScore = result.data.newScore;
+                s.atsData.matchedKeywords = result.data.matchedKeywords || [];
+                s.atsData.missingKeywords = result.data.missingKeywords || [];
+
                 return s;
             });
 
-            // Show optimization modal
+            // Update UI elements
+            if (result.data.summary && elements.summary) {
+                elements.summary.value = result.data.summary;
+            }
+
+            // Update skills inputs if they exist
+            if (elements.technicalSkills) {
+                const state = store.getState();
+                elements.technicalSkills.value = state.skills.technical.join(', ');
+            }
+            if (elements.toolsSkills) {
+                const state = store.getState();
+                elements.toolsSkills.value = state.skills.tools.join(', ');
+            }
+
+            // Show optimization modal with enhanced results
             showOptimizationResults(result.data);
         } else {
             showToast(result.message || 'Optimization failed', 'error');
@@ -650,22 +690,70 @@ function showOptimizationResults(data) {
     elements.beforeScore.textContent = data.initialScore + '%';
     elements.afterScore.textContent = data.newScore + '%';
 
-    elements.optimizedBullets.innerHTML = data.optimizedBullets.map(opt => `
-        <div class="optimized-bullet-item">
-            <div class="bullet-version">
-                <div class="bullet-version-label">Original</div>
-                <div class="bullet-original">${opt.original}</div>
-            </div>
-            <div class="bullet-version">
-                <div class="bullet-version-label">AI Optimized</div>
-                <div class="bullet-rewritten">${opt.rewritten}</div>
-                <span class="injected-keyword">+${opt.injectedKeyword}</span>
-            </div>
-        </div>
-    `).join('');
+    // Add improvement indicator
+    const improvement = data.improvement || (data.newScore - data.initialScore);
 
+    // Build enhanced results display
+    let resultsHTML = '';
+
+    // Show skills added section if any
+    if (data.skillsAdded && (data.skillsAdded.technical.length > 0 || data.skillsAdded.tools.length > 0)) {
+        resultsHTML += `
+            <div class="optimization-section skills-added">
+                <h4>🎯 Skills Added to Your Resume</h4>
+                <div class="added-skills-list">
+                    ${data.skillsAdded.technical.map(s => `<span class="skill-tag technical">${s}</span>`).join('')}
+                    ${data.skillsAdded.tools.map(s => `<span class="skill-tag tool">${s}</span>`).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Show summary if generated
+    if (data.summary) {
+        resultsHTML += `
+            <div class="optimization-section summary-preview">
+                <h4>📝 Optimized Professional Summary</h4>
+                <p class="summary-text">${data.summary}</p>
+            </div>
+        `;
+    }
+
+    // Show optimized bullets (limit to first 5 for readability)
+    const bulletsToShow = data.optimizedBullets.slice(0, 5);
+    resultsHTML += `
+        <div class="optimization-section bullets-preview">
+            <h4>✨ Optimized Experience Bullets (${data.optimizedBullets.length} total)</h4>
+            ${bulletsToShow.map(opt => `
+                <div class="optimized-bullet-item">
+                    <div class="bullet-version">
+                        <div class="bullet-version-label">Original</div>
+                        <div class="bullet-original">${opt.original}</div>
+                    </div>
+                    <div class="bullet-version">
+                        <div class="bullet-version-label">AI Optimized</div>
+                        <div class="bullet-rewritten">${opt.rewritten}</div>
+                        <div class="injected-keywords">
+                            ${(opt.allInjectedKeywords || [opt.injectedKeyword]).map(k => `<span class="injected-keyword">+${k}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+            ${data.optimizedBullets.length > 5 ? `<p class="more-bullets">... and ${data.optimizedBullets.length - 5} more bullets optimized!</p>` : ''}
+        </div>
+    `;
+
+    elements.optimizedBullets.innerHTML = resultsHTML;
     elements.optimizationModal.classList.add('active');
+
+    // Update score display with color
     elements.atsScoreDisplay.textContent = data.newScore + '%';
+    elements.atsScoreDisplay.style.color =
+        data.newScore >= 70 ? '#10b981' :
+            data.newScore >= 40 ? '#f59e0b' : '#ef4444';
+
+    // Show success message
+    showToast(`🎯 ATS Score improved from ${data.initialScore}% to ${data.newScore}% (+${improvement}%)`, 'success');
 }
 
 function closeOptimizationModal() {
@@ -678,13 +766,15 @@ function acceptAllOptimizations() {
             exp.bullets.forEach(bullet => {
                 if (bullet.rewritten && bullet.isAIRewritten) {
                     bullet.accepted = true;
+                    // Update original to show rewritten version in preview
+                    bullet.original = bullet.rewritten;
                 }
             });
         });
         return state;
     });
     closeOptimizationModal();
-    showToast('All optimizations accepted!', 'success');
+    showToast('🎉 All optimizations accepted! Your resume is now ATS-optimized.', 'success');
 }
 
 // ============================================

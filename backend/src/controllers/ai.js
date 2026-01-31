@@ -17,23 +17,28 @@ const Resume = require('../models/Resume');
 
 const PROMPTS = {
     analyzeJD: (jdText) => `
-You are an expert ATS (Applicant Tracking System) analyzer.
+You are an expert ATS (Applicant Tracking System) analyzer with deep knowledge of how ATS systems parse and score resumes.
 
-Analyze this job description and extract keywords. Categorize them into:
-1. technicalSkills - Programming languages, frameworks, technical abilities
-2. tools - Software, platforms, tools mentioned
-3. softSkills - Communication, leadership, interpersonal skills
-4. methodologies - Agile, Scrum, DevOps, processes
+Analyze this job description and extract ALL relevant keywords. Be thorough - ATS systems look for exact matches.
 
-For each category, rank keywords by importance (most important first).
-Only include keywords that appear in the JD or are strongly implied.
+Categorize keywords into:
+1. technicalSkills - Programming languages, frameworks, libraries, technical abilities, APIs, databases
+2. tools - Software, platforms, IDEs, cloud services, monitoring tools, version control
+3. softSkills - Communication, leadership, collaboration, problem-solving, interpersonal skills
+4. methodologies - Agile, Scrum, DevOps, CI/CD, TDD, processes, frameworks
+
+IMPORTANT: 
+- Rank keywords by importance (most critical for the role first)
+- Include both explicit mentions AND strongly implied requirements
+- Include variations (e.g., "JavaScript" and "JS", "React" and "ReactJS")
+- Extract at least 10 technical skills if present
 
 Return ONLY valid JSON in this exact format:
 {
-  "technicalSkills": ["skill1", "skill2"],
-  "tools": ["tool1", "tool2"],
-  "softSkills": ["skill1", "skill2"],
-  "methodologies": ["method1", "method2"],
+  "technicalSkills": ["skill1", "skill2", ...],
+  "tools": ["tool1", "tool2", ...],
+  "softSkills": ["skill1", "skill2", ...],
+  "methodologies": ["method1", "method2", ...],
   "seniorityLevel": "junior|mid|senior|lead",
   "roleType": "string describing the role"
 }
@@ -51,7 +56,7 @@ TASK: Rewrite this resume bullet point to naturally include the keyword "${keywo
 
 STRICT RULES:
 1. Maximum 25 words
-2. Start with a strong action verb (Led, Developed, Implemented, etc.)
+2. Start with a strong action verb (Led, Developed, Implemented, Architected, Optimized, etc.)
 3. Include quantifiable results if context allows (%, $, numbers)
 4. Keep the original meaning - DO NOT fabricate experience
 5. Professional tone, no buzzwords or fluff
@@ -61,6 +66,61 @@ Original bullet: "${bulletPoint}"
 ${context ? `Context (role/company): ${context}` : ''}
 
 Respond with ONLY the rewritten bullet point, nothing else.
+`,
+
+    optimizeBulletAggressive: (bulletPoint, keywords, context) => `
+You are an expert ATS resume optimizer. Your goal is to maximize ATS score by naturally incorporating multiple relevant keywords.
+
+TASK: Rewrite this bullet point to include AS MANY of these keywords as naturally fit: ${keywords.join(', ')}
+
+Original bullet: "${bulletPoint}"
+${context ? `Context: ${context}` : ''}
+
+CRITICAL RULES:
+1. Maximum 30 words
+2. Start with POWERFUL action verb (Spearheaded, Architected, Engineered, Orchestrated, Transformed, Pioneered)
+3. MUST include quantifiable metrics (%, $, time saved, users impacted, performance improvement)
+4. Naturally incorporate 2-4 keywords from the list
+5. Keep the core meaning - never fabricate experience
+6. Sound impressive but professional - this is for a top-tier role
+
+Example transformations:
+- "Worked on website" → "Engineered scalable React web application serving 50K+ users with 99.9% uptime"
+- "Fixed bugs" → "Optimized debugging workflows using Agile methodologies, reducing defect resolution time by 40%"
+- "Made reports" → "Developed automated Python analytics pipeline generating real-time dashboards for stakeholder decision-making"
+
+Respond with ONLY the optimized bullet point.
+`,
+
+    optimizeSummary: (resumeData, targetKeywords, jdText) => `
+You are an expert resume writer specializing in ATS-optimized professional summaries.
+
+Write a POWERFUL 3-4 sentence professional summary that will score highly on ATS systems.
+
+Target Keywords to Include (use at least 5): ${targetKeywords.join(', ')}
+
+Candidate Information:
+- Current/Recent Role: ${resumeData.experience?.[0]?.role || 'Software Professional'}
+- Company: ${resumeData.experience?.[0]?.company || 'Technology Company'}
+- Key Skills: ${resumeData.skills?.technical?.join(', ') || 'Various technical skills'}
+- Tools: ${resumeData.skills?.tools?.join(', ') || 'Modern development tools'}
+- Number of Roles: ${resumeData.experience?.length || 1}
+
+Job Context: ${jdText?.substring(0, 300) || 'Technical role'}
+
+RULES:
+1. 60-80 words maximum
+2. NO first person ("I am", "I have")
+3. Include 5+ target keywords naturally woven in
+4. Lead with years of experience and core expertise
+5. Mention 2-3 key technologies/skills
+6. End with value proposition or achievement
+7. Sound confident and accomplished
+
+Example format:
+"Results-driven [Role] with X+ years of expertise in [Keywords]. Proven track record of [Achievement with metrics] leveraging [Technologies]. Skilled in [More keywords] with experience in [Methodology]. Passionate about [Value proposition]."
+
+Respond with ONLY the summary text.
 `,
 
     generateSummary: (resumeData, targetKeywords) => `
@@ -391,7 +451,7 @@ exports.rewriteBulletPoint = async (req, res) => {
 };
 
 // ============================================
-// MAGIC BUTTON - FULL OPTIMIZATION
+// MAGIC BUTTON - FULL OPTIMIZATION (ENHANCED)
 // ============================================
 
 // @desc    Magic Button - Full resume optimization workflow
@@ -413,108 +473,218 @@ exports.optimizeResume = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Resume not found' });
         }
 
-        // Step 1: Analyze JD
+        console.log('🚀 Starting Magic Optimization...');
+
+        // Step 1: Analyze JD thoroughly
+        console.log('📋 Step 1: Analyzing Job Description...');
         const jdResult = await model.generateContent(PROMPTS.analyzeJD(jdText));
         const jdResponse = await jdResult.response;
         const jdText2 = jdResponse.text();
         const jsonMatch = jdText2.match(/\{[\s\S]*\}/);
         const keywords = JSON.parse(jsonMatch[0]);
 
+        // Compile all keywords with priority
+        const technicalSkills = keywords.technicalSkills || [];
+        const tools = keywords.tools || [];
+        const softSkills = keywords.softSkills || [];
+        const methodologies = keywords.methodologies || [];
+
+        const allKeywords = [...technicalSkills, ...tools, ...softSkills, ...methodologies];
+        console.log(`📊 Extracted ${allKeywords.length} keywords from JD`);
+
         // Step 2: Calculate initial ATS score
+        console.log('📈 Step 2: Calculating Initial ATS Score...');
         const resumeText = buildResumeText(resume);
-        const allKeywords = [
-            ...(keywords.technicalSkills || []),
-            ...(keywords.tools || []),
-            ...(keywords.softSkills || []),
-            ...(keywords.methodologies || [])
-        ];
 
         let matched = [];
         let missing = [];
         allKeywords.forEach(kw => {
-            if (resumeText.includes(kw.toLowerCase())) {
+            const regex = new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+            if (regex.test(resumeText)) {
                 matched.push(kw);
             } else {
                 missing.push(kw);
             }
         });
 
-        const initialScore = Math.round((matched.length / allKeywords.length) * 100);
+        const initialScore = allKeywords.length > 0 ? Math.round((matched.length / allKeywords.length) * 100) : 0;
+        console.log(`📉 Initial ATS Score: ${initialScore}% (${matched.length}/${allKeywords.length} keywords)`);
 
-        // Step 3: Rewrite bullets with missing keywords
+        // Step 3: AGGRESSIVE Optimization - Rewrite ALL bullets with multiple keywords
+        console.log('✍️ Step 3: Optimizing ALL Bullet Points...');
         const optimizedBullets = [];
-        const keywordsToInject = missing.slice(0, 5); // Top 5 missing keywords
 
-        for (let i = 0; i < Math.min(resume.experience.length, 3); i++) {
+        // Prioritize missing keywords - technical first, then tools, then methodologies
+        const prioritizedMissing = [
+            ...missing.filter(k => technicalSkills.includes(k)),
+            ...missing.filter(k => tools.includes(k)),
+            ...missing.filter(k => methodologies.includes(k)),
+            ...missing.filter(k => softSkills.includes(k))
+        ];
+
+        // Optimize ALL experiences and ALL bullets
+        for (let i = 0; i < resume.experience.length; i++) {
             const exp = resume.experience[i];
-            for (let j = 0; j < Math.min(exp.bullets?.length || 0, 2); j++) {
+            const context = `${exp.role} at ${exp.company}`;
+
+            for (let j = 0; j < (exp.bullets?.length || 0); j++) {
                 const bullet = exp.bullets[j];
-                const keyword = keywordsToInject[optimizedBullets.length % keywordsToInject.length];
 
-                if (keyword && bullet.original) {
-                    try {
-                        const rewriteResult = await model.generateContent(
-                            PROMPTS.rewriteBullet(bullet.original, keyword, `${exp.role} at ${exp.company}`)
-                        );
-                        const rewriteResponse = await rewriteResult.response;
-                        const rewritten = rewriteResponse.text().trim().replace(/^["']|["']$/g, '');
+                if (bullet.original && bullet.original.trim()) {
+                    // Get keywords for this bullet (cycle through missing keywords)
+                    const keywordIndex = optimizedBullets.length;
+                    const keywordsForBullet = [];
 
-                        optimizedBullets.push({
-                            experienceIndex: i,
-                            bulletIndex: j,
-                            original: bullet.original,
-                            rewritten,
-                            injectedKeyword: keyword
-                        });
+                    // Assign 3-4 different keywords per bullet to maximize coverage
+                    for (let k = 0; k < 4 && keywordIndex + k < prioritizedMissing.length; k++) {
+                        keywordsForBullet.push(prioritizedMissing[(keywordIndex + k) % Math.max(prioritizedMissing.length, 1)]);
+                    }
 
-                        // Update in resume
-                        resume.experience[i].bullets[j].rewritten = rewritten;
-                        resume.experience[i].bullets[j].isAIRewritten = true;
-                        resume.experience[i].bullets[j].injectedKeywords = [keyword];
-                    } catch (e) {
-                        console.error('Bullet rewrite failed:', e.message);
+                    // If no missing keywords, use matched ones to reinforce
+                    if (keywordsForBullet.length === 0 && matched.length > 0) {
+                        keywordsForBullet.push(matched[keywordIndex % matched.length]);
+                    }
+
+                    if (keywordsForBullet.length > 0) {
+                        try {
+                            // Use aggressive optimization prompt for multiple keywords
+                            const rewriteResult = await model.generateContent(
+                                PROMPTS.optimizeBulletAggressive(bullet.original, keywordsForBullet, context)
+                            );
+                            const rewriteResponse = await rewriteResult.response;
+                            let rewritten = rewriteResponse.text().trim().replace(/^["']|["']$/g, '');
+
+                            // Ensure word limit
+                            const words = rewritten.split(/\s+/);
+                            if (words.length > 35) {
+                                rewritten = words.slice(0, 30).join(' ');
+                            }
+
+                            optimizedBullets.push({
+                                experienceIndex: i,
+                                bulletIndex: j,
+                                original: bullet.original,
+                                rewritten,
+                                injectedKeyword: keywordsForBullet[0],
+                                allInjectedKeywords: keywordsForBullet
+                            });
+
+                            // Update in resume
+                            resume.experience[i].bullets[j].rewritten = rewritten;
+                            resume.experience[i].bullets[j].isAIRewritten = true;
+                            resume.experience[i].bullets[j].injectedKeywords = keywordsForBullet;
+                            resume.experience[i].bullets[j].accepted = true; // Auto-accept for magic optimize
+
+                            console.log(`  ✅ Optimized bullet ${i + 1}.${j + 1} with keywords: ${keywordsForBullet.join(', ')}`);
+                        } catch (e) {
+                            console.error(`  ❌ Bullet ${i + 1}.${j + 1} rewrite failed:`, e.message);
+                        }
                     }
                 }
             }
         }
 
-        // Step 4: Recalculate ATS score
+        // Step 4: Generate ATS-Optimized Summary
+        console.log('📝 Step 4: Generating Optimized Summary...');
+        try {
+            const targetKeywordsForSummary = [
+                ...technicalSkills.slice(0, 4),
+                ...tools.slice(0, 2),
+                ...methodologies.slice(0, 2)
+            ];
+
+            const summaryResult = await model.generateContent(
+                PROMPTS.optimizeSummary(resume, targetKeywordsForSummary, jdText)
+            );
+            const summaryResponse = await summaryResult.response;
+            const optimizedSummary = summaryResponse.text().trim().replace(/^["']|["']$/g, '');
+
+            resume.personalInfo = resume.personalInfo || {};
+            resume.personalInfo.summary = optimizedSummary;
+            console.log('  ✅ Generated ATS-optimized summary');
+        } catch (e) {
+            console.error('  ❌ Summary generation failed:', e.message);
+        }
+
+        // Step 5: Auto-add missing skills to skills section
+        console.log('🔧 Step 5: Enhancing Skills Section...');
+        resume.skills = resume.skills || { technical: [], tools: [] };
+
+        // Add missing technical skills
+        const currentTechnical = (resume.skills.technical || []).map(s => s.toLowerCase());
+        const missingTechnical = technicalSkills.filter(s =>
+            !currentTechnical.includes(s.toLowerCase())
+        ).slice(0, 5);
+
+        resume.skills.technical = [...(resume.skills.technical || []), ...missingTechnical];
+
+        // Add missing tools
+        const currentTools = (resume.skills.tools || []).map(s => s.toLowerCase());
+        const missingTools = tools.filter(s =>
+            !currentTools.includes(s.toLowerCase())
+        ).slice(0, 4);
+
+        resume.skills.tools = [...(resume.skills.tools || []), ...missingTools];
+
+        console.log(`  ✅ Added ${missingTechnical.length} technical skills and ${missingTools.length} tools`);
+
+        // Step 6: Recalculate ATS score with optimized content
+        console.log('📊 Step 6: Calculating New ATS Score...');
         const newResumeText = buildResumeText(resume);
+
         let newMatched = [];
+        let stillMissing = [];
         allKeywords.forEach(kw => {
-            if (newResumeText.includes(kw.toLowerCase())) {
+            const regex = new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+            if (regex.test(newResumeText)) {
                 newMatched.push(kw);
+            } else {
+                stillMissing.push(kw);
             }
         });
-        const newScore = Math.round((newMatched.length / allKeywords.length) * 100);
+
+        const newScore = allKeywords.length > 0 ? Math.round((newMatched.length / allKeywords.length) * 100) : 0;
+        const improvement = newScore - initialScore;
+
+        console.log(`📈 New ATS Score: ${newScore}% (+${improvement}%)`);
+        console.log(`  Matched: ${newMatched.length}/${allKeywords.length} keywords`);
 
         // Save resume with all updates
         resume.atsData = {
             targetJD: jdText,
             extractedKeywords: {
-                technical: keywords.technicalSkills || [],
-                tools: keywords.tools || [],
-                soft: keywords.softSkills || [],
-                methodologies: keywords.methodologies || []
+                technical: technicalSkills,
+                tools: tools,
+                soft: softSkills,
+                methodologies: methodologies
             },
             atsScore: newScore,
             previousScore: initialScore,
             matchedKeywords: newMatched,
-            missingKeywords: allKeywords.filter(k => !newMatched.includes(k)),
+            missingKeywords: stillMissing,
             lastAnalyzed: new Date()
         };
-        resume.status = 'optimizing';
+        resume.status = 'completed';
         await resume.save();
+
+        console.log('🎉 Magic Optimization Complete!');
 
         res.status(200).json({
             success: true,
             data: {
                 initialScore,
                 newScore,
-                improvement: newScore - initialScore,
+                improvement,
                 optimizedBullets,
                 keywords,
-                message: `ATS score improved from ${initialScore}% to ${newScore}%`
+                skillsAdded: {
+                    technical: missingTechnical,
+                    tools: missingTools
+                },
+                summary: resume.personalInfo?.summary,
+                matchedKeywords: newMatched,
+                missingKeywords: stillMissing,
+                message: `🎯 ATS score improved from ${initialScore}% to ${newScore}% (+${improvement}%)`
             }
         });
     } catch (err) {

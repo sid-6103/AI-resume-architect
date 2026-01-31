@@ -1128,6 +1128,138 @@ textarea.form-input {
 }
 
 /* ============================================
+   ENHANCED OPTIMIZATION MODAL STYLES
+   ============================================ */
+
+.optimization-section {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+}
+
+.optimization-section h4 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.added-skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.skill-tag.technical {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    color: var(--accent-purple);
+}
+
+.skill-tag.tool {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: var(--accent-blue);
+}
+
+.summary-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.bullets-preview h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.optimized-bullet-item {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.optimized-bullet-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.bullet-version {
+    margin-bottom: 10px;
+}
+
+.bullet-version-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.bullet-original {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.bullet-rewritten {
+    color: var(--accent-green);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.injected-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.injected-keyword {
+    padding: 3px 8px;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.more-bullets {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-top: 12px;
+}
+
+.score-box.improved {
+    animation: scoreGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes scoreGlow {
+    from {
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    to {
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+    }
+}
+
+/* ============================================
    LOADING STATES
    ============================================ */
 
