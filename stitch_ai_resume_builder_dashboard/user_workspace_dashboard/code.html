@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Workspace Dashboard - AI Resume Builder</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111318] dark:text-gray-100 min-h-screen">
+<div class="flex flex-col min-h-screen">
+<!-- Top Navigation -->
+<header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="text-primary size-8">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_6_330)">
+<path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"></path>
+</g>
+<defs><clippath id="clip0_6_330"><rect fill="white" height="48" width="48"></rect></clippath></defs>
+</svg>
+</div>
+<span class="text-lg font-bold tracking-tight">AI Resume Builder</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-semibold text-primary" href="#">My Resumes</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary transition-colors" href="#">Templates</a>
+<a class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary transition-colors" href="#">Tips &amp; Guide</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden sm:flex h-9 px-4 items-center justify-center bg-primary/10 text-primary rounded-lg text-sm font-bold hover:bg-primary/20 transition-all">
+                        Upgrade
+                    </button>
+<div class="h-9 w-9 rounded-full bg-gray-200 dark:bg-gray-700 bg-cover bg-center border border-gray-200 dark:border-gray-700" data-alt="User profile avatar circle" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC4JXfRBcda0YFYTmfhM-Z79HE4AMSBjSHge5AUa76UUu_Vr77IMreONC26CaxtivOcmf6YAflTJKj0BfwJ96ey64xecuvGQ49t6Yq1yd0ZuJgRYYIF55U8eLmIfoQuVwwuEVXq15FHmouoXipF-TVCqtTUvu8fNIfVbEfQoVA1jVnAbpt_FoSTjXh7Upj80TQ4SRg4aD2FYtt-XQ2uhshpk7P_mr8JSnUVqU6_FjCUBoc555wnxEtViQ3L70JRScGXk8p78i2E3KAd");'></div>
+</div>
+</div>
+</header>
+<!-- Main Dashboard Content -->
+<main class="flex-grow max-w-7xl mx-auto w-full px-6 py-8">
+<!-- Page Heading Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<h1 class="text-3xl font-black tracking-tight mb-1">My Resumes</h1>
+<p class="text-gray-500 dark:text-gray-400">Manage and iterate on your professional applications (4 resumes)</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 h-10 px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+<span class="material-symbols-outlined text-[20px]">folder_open</span>
+                        New Folder
+                    </button>
+<button class="flex items-center gap-2 h-10 px-4 bg-primary text-white rounded-lg text-sm font-bold shadow-md hover:bg-blue-700 transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Create New
+                    </button>
+</div>
+</div>
+<!-- Toolbar & Filters -->
+<div class="flex items-center justify-between mb-6 bg-white dark:bg-gray-900 p-2 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+<div class="flex items-center flex-1 max-w-md px-3 gap-2">
+<span class="material-symbols-outlined text-gray-400">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm py-2" placeholder="Search resumes..." type="text"/>
+</div>
+<div class="flex items-center gap-1 pr-1">
+<button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<div class="h-6 w-[1px] bg-gray-200 dark:bg-gray-800 mx-1"></div>
+<button class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                        Sort: Recent
+                        <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Resume Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Create New Card -->
+<div class="group cursor-pointer flex flex-col gap-4">
+<div class="w-full aspect-[3/4] bg-white dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl flex flex-col items-center justify-center gap-4 transition-all group-hover:border-primary group-hover:bg-primary/5">
+<div class="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-3xl font-bold">add</span>
+</div>
+<span class="font-bold text-gray-600 dark:text-gray-400 group-hover:text-primary">Create New Resume</span>
+</div>
+<div class="h-12 opacity-0">spacer</div>
+</div>
+<!-- Resume Item 1 -->
+<div class="group flex flex-col gap-3">
+<div class="relative w-full aspect-[3/4] bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden group-hover:shadow-lg group-hover:border-primary/50 transition-all">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover opacity-90 transition-transform group-hover:scale-105" data-alt="Resume thumbnail preview showing text blocks" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBpX1kGqjm3qofbsRw6wfzsgcZHOXjlKOrvAzg02Xr6S12o4pMVjdmI3BWMeMzIKYPSrVnnBg6P3sNGmEEiPFz4mPu7DfyEnp2kBjU_tr7TCSc4KJOLwMof7rZyjF2BdXkCKxnh57GmRQGn458-zzaFYcwTdK33SmOYn9q8uwStFx69vUyqPYylWxdAaOvnWO5jcesd2NvcECp6ecXwvcyZgjCl1q9PLpwzOhWuLjv7EkF0vlKjBS921-Bb6tv18LucPFAZhIEf2gUZ");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="h-10 px-4 bg-primary text-white rounded-lg text-sm font-bold shadow-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                            </button>
+<button class="h-10 w-10 bg-white text-gray-900 rounded-lg flex items-center justify-center shadow-lg hover:bg-gray-100">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<div class="px-1">
+<h3 class="text-base font-bold text-gray-900 dark:text-white truncate">Senior Software Engineer</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">Modified 2 hours ago</p>
+<div class="flex gap-3 mt-2 text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="hover:underline">Duplicate</button>
+<button class="hover:underline text-red-500">Delete</button>
+</div>
+</div>
+</div>
+<!-- Resume Item 2 -->
+<div class="group flex flex-col gap-3">
+<div class="relative w-full aspect-[3/4] bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden group-hover:shadow-lg group-hover:border-primary/50 transition-all">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover opacity-90 transition-transform group-hover:scale-105" data-alt="Resume thumbnail with blue accent bars" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCylnYa_k1xkoxSvvwAMYyxqTUBZ9OLFYbMwp6RYQ4ljpCJEXZ-1pw30rczAwecQ4JV_ZMMF95nYlYI05DaklVVMgaAL1e-kx7QMVqMvv-jkvrpSF_x2Zmspou7dOELIsJ4OboMuST4XXpzl-LIaDf7MKmmZ6Urd1kK_iRzQp5Yr4r9lcFZCvoyncsRj7LE6juZrfav-x-J1tjC2PSmIVvu0eOIvbccxnoSEoOaN7C3AeRkVHMAuZ9jCmcxTacfE3Cm3uNQzjZge_Uy");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="h-10 px-4 bg-primary text-white rounded-lg text-sm font-bold shadow-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                            </button>
+<button class="h-10 w-10 bg-white text-gray-900 rounded-lg flex items-center justify-center shadow-lg hover:bg-gray-100">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<div class="px-1">
+<h3 class="text-base font-bold text-gray-900 dark:text-white truncate">Product Designer 2024</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">Modified 3 days ago</p>
+<div class="flex gap-3 mt-2 text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="hover:underline">Duplicate</button>
+<button class="hover:underline text-red-500">Delete</button>
+</div>
+</div>
+</div>
+<!-- Resume Item 3 -->
+<div class="group flex flex-col gap-3">
+<div class="relative w-full aspect-[3/4] bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden group-hover:shadow-lg group-hover:border-primary/50 transition-all">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover opacity-90 transition-transform group-hover:scale-105" data-alt="Resume thumbnail with elegant serif typography" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdYtUOaVfKp9h65nEyxtf9EQ4_HLF3eQoSgtUfCxmA16rlbcHwzAmIkgSRhuMV7K92JjzRUqJ9r-8QwUbZccYGmjNkFJlLAjCoOs5CtIDwPvFLACcOP6BM3CkCW43-cwGSmKYFDpQ7E52QlQOGoBxjfAq_mL2bK_q72hHP36e5q-4Oy1E1ByEwXQAPbA2NfhpSaYUhtLTkUbNQwwBvhno9CZLTGIjZ4UWS8wOBmN7aTl_jPGLidGXW1DVp6RP8ynwOwc8-164fVm-D");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="h-10 px-4 bg-primary text-white rounded-lg text-sm font-bold shadow-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                            </button>
+<button class="h-10 w-10 bg-white text-gray-900 rounded-lg flex items-center justify-center shadow-lg hover:bg-gray-100">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<div class="px-1">
+<h3 class="text-base font-bold text-gray-900 dark:text-white truncate">Marketing Director CV</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">Modified 1 week ago</p>
+<div class="flex gap-3 mt-2 text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="hover:underline">Duplicate</button>
+<button class="hover:underline text-red-500">Delete</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Section -->
+<div class="mt-16">
+<h3 class="text-lg font-bold tracking-tight mb-4 px-1">Recent Activity</h3>
+<div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm divide-y divide-gray-100 dark:divide-gray-800">
+<div class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="text-sm font-bold">Exported "Senior Software Engineer"</p>
+<p class="text-xs text-gray-500">PDF • 2 hours ago</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">open_in_new</span></button>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-green-600">
+<span class="material-symbols-outlined">content_copy</span>
+</div>
+<div>
+<p class="text-sm font-bold">Duplicated "Product Designer 2024"</p>
+<p class="text-xs text-gray-500">Draft • 3 days ago</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">open_in_new</span></button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8">
+<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+<span class="text-sm">© 2024 AI Resume Builder. All rights reserved.</span>
+</div>
+<div class="flex items-center gap-6">
+<a class="text-xs font-bold text-gray-500 hover:text-primary" href="#">Privacy Policy</a>
+<a class="text-xs font-bold text-gray-500 hover:text-primary" href="#">Terms of Service</a>
+<a class="text-xs font-bold text-gray-500 hover:text-primary" href="#">Help Center</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Resume Maker | Craft Your Career</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white antialiased">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-[#f0f2f4] dark:border-gray-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<svg fill="none" height="32" viewbox="0 0 48 48" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold tracking-tight">ResumeAI</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Features</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Templates</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Pricing</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden sm:block text-sm font-bold px-4 py-2 text-[#111318] dark:text-white">Login</button>
+<button class="bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-all shadow-sm">
+                    Build My Resume
+                </button>
+</div>
+</div>
+</header>
+<main class="flex flex-col">
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-16 pb-12 md:pt-24 md:pb-20">
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="flex flex-col gap-8 max-w-xl">
+<div class="flex flex-col gap-4">
+<h1 class="text-5xl md:text-6xl font-black leading-[1.1] tracking-tight text-[#111318] dark:text-white">
+                            Land your dream job with an <span class="text-primary">AI-powered</span> resume.
+                        </h1>
+<p class="text-lg text-[#616f89] dark:text-gray-400 leading-relaxed">
+                            Our AI writes professional bullet points in seconds. Choose a template, let the AI work its magic, and download your high-converting resume.
+                        </p>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex flex-wrap gap-3">
+<button class="h-14 px-8 bg-primary text-white rounded-xl font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+                                Build My Resume
+                            </button>
+<button class="h-14 px-8 border-2 border-[#dbdfe6] dark:border-gray-700 rounded-xl font-bold text-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+                                View Templates
+                            </button>
+</div>
+<div class="flex items-center gap-2 px-1">
+<span class="material-symbols-outlined text-green-500 text-sm">check_circle</span>
+<p class="text-[#616f89] dark:text-gray-400 text-sm font-medium">Join 10,000+ professionals landing jobs daily</p>
+</div>
+</div>
+</div>
+<!-- Minimalist Illustration/Mockup -->
+<div class="relative w-full aspect-square md:aspect-video lg:aspect-square flex items-center justify-center">
+<div class="absolute inset-0 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="relative w-full max-w-[500px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-[#f0f2f4] dark:border-gray-800 overflow-hidden">
+<!-- Resume Mockup UI -->
+<div class="h-8 bg-[#f8fafc] dark:bg-gray-800 flex items-center gap-1.5 px-4 border-b border-[#f0f2f4] dark:border-gray-700">
+<div class="size-2 rounded-full bg-red-400"></div>
+<div class="size-2 rounded-full bg-amber-400"></div>
+<div class="size-2 rounded-full bg-emerald-400"></div>
+</div>
+<div class="p-8 flex flex-col gap-6">
+<div class="flex justify-between items-start">
+<div class="space-y-2">
+<div class="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+<div class="h-3 w-48 bg-gray-100 dark:bg-gray-800 rounded"></div>
+</div>
+<div class="size-16 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-300">account_circle</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="h-4 w-20 bg-primary/20 rounded"></div>
+<div class="space-y-2">
+<div class="h-3 w-full bg-gray-100 dark:bg-gray-800 rounded"></div>
+<div class="h-3 w-full bg-gray-100 dark:bg-gray-800 rounded"></div>
+<div class="h-3 w-2/3 bg-gray-100 dark:bg-gray-800 rounded"></div>
+</div>
+</div>
+<!-- AI Generating Part -->
+<div class="p-4 bg-primary/5 rounded-lg border border-primary/20 relative">
+<div class="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs">auto_awesome</span>
+                                    AI Writing Experience
+                                </div>
+<div class="h-3 w-full bg-primary/10 rounded mb-2"></div>
+<div class="h-3 w-4/5 bg-primary/10 rounded"></div>
+<div class="absolute bottom-2 right-2 size-4 bg-primary rounded-full animate-ping opacity-20"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature/Process Section -->
+<section class="py-20 bg-white dark:bg-[#0c111d]">
+<div class="max-w-7xl mx-auto px-6">
+<div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+<div class="max-w-2xl space-y-4">
+<h2 class="text-3xl md:text-4xl font-black tracking-tight text-[#111318] dark:text-white">How it Works</h2>
+<p class="text-lg text-[#616f89] dark:text-gray-400">Creating a professional, recruiter-ready resume has never been easier or faster.</p>
+</div>
+<a class="text-primary font-bold flex items-center gap-2 hover:underline" href="#">
+                        Learn more about our technology
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Step 1 -->
+<div class="group p-8 rounded-2xl border border-[#dbdfe6] dark:border-gray-800 bg-background-light dark:bg-background-dark hover:border-primary/50 transition-all duration-300">
+<div class="size-14 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-primary shadow-sm mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">dashboard</span>
+</div>
+<h3 class="text-xl font-bold mb-3">Choose Template</h3>
+<p class="text-[#616f89] dark:text-gray-400 leading-relaxed">
+                            Select from dozens of professional designs tailored for ATS scanning systems and recruiter preferences.
+                        </p>
+</div>
+<!-- Step 2 -->
+<div class="group p-8 rounded-2xl border border-[#dbdfe6] dark:border-gray-800 bg-background-light dark:bg-background-dark hover:border-primary/50 transition-all duration-300">
+<div class="size-14 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-primary shadow-sm mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">auto_awesome</span>
+</div>
+<h3 class="text-xl font-bold mb-3">AI Writing</h3>
+<p class="text-[#616f89] dark:text-gray-400 leading-relaxed">
+                            Generate impactful bullet points and summaries instantly using our industry-leading AI language model.
+                        </p>
+</div>
+<!-- Step 3 -->
+<div class="group p-8 rounded-2xl border border-[#dbdfe6] dark:border-gray-800 bg-background-light dark:bg-background-dark hover:border-primary/50 transition-all duration-300">
+<div class="size-14 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-primary shadow-sm mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">download</span>
+</div>
+<h3 class="text-xl font-bold mb-3">Download</h3>
+<p class="text-[#616f89] dark:text-gray-400 leading-relaxed">
+                            Export to high-quality PDF, Word doc, or share via a unique live link directly with employers.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-20 px-6">
+<div class="max-w-5xl mx-auto rounded-3xl bg-primary px-8 py-16 md:px-20 text-center text-white relative overflow-hidden">
+<!-- Abstract Pattern background -->
+<div class="absolute inset-0 opacity-10" data-alt="Abstract white line pattern on blue background">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M0 100 C 20 0 50 0 100 100" fill="transparent" stroke="white" stroke-width="0.5"></path>
+<path d="M0 0 C 30 100 70 100 100 0" fill="transparent" stroke="white" stroke-width="0.5"></path>
+</svg>
+</div>
+<div class="relative z-10 space-y-8">
+<h2 class="text-4xl md:text-5xl font-black leading-tight">Ready to upgrade your career?</h2>
+<p class="text-lg opacity-90 max-w-2xl mx-auto">
+                        Don't let a poorly formatted resume hold you back. Start building your professional resume in minutes and get noticed by top employers.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+<button class="h-14 px-10 bg-white text-primary rounded-xl font-bold text-lg hover:bg-gray-100 transition-all">
+                            Get Started Now
+                        </button>
+<button class="h-14 px-10 bg-primary border-2 border-white/30 text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all">
+                            Browse FAQ
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-background-dark border-t border-[#f0f2f4] dark:border-gray-800 py-12">
+<div class="max-w-7xl mx-auto px-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-[#f0f2f4] dark:border-gray-800 pb-12 mb-8">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<svg fill="none" height="24" viewbox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold tracking-tight">ResumeAI</h2>
+</div>
+<div class="flex gap-8">
+<a class="text-sm text-[#616f89] hover:text-primary" href="#">Twitter</a>
+<a class="text-sm text-[#616f89] hover:text-primary" href="#">LinkedIn</a>
+<a class="text-sm text-[#616f89] hover:text-primary" href="#">GitHub</a>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between gap-4">
+<p class="text-sm text-[#616f89]">© 2024 ResumeAI Inc. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-sm text-[#616f89] hover:text-primary" href="#">Privacy Policy</a>
+<a class="text-sm text-[#616f89] hover:text-primary" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

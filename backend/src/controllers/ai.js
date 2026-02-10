@@ -79,12 +79,13 @@ Original bullet: "${bulletPoint}"
 ${context ? `Context: ${context}` : ''}
 
 CRITICAL RULES:
-1. Maximum 30 words
+1. Maximum 35 words
 2. Start with POWERFUL action verb (Spearheaded, Architected, Engineered, Orchestrated, Transformed, Pioneered)
 3. MUST include quantifiable metrics (%, $, time saved, users impacted, performance improvement)
-4. Naturally incorporate 2-4 keywords from the list
-5. Keep the core meaning - never fabricate experience
-6. Sound impressive but professional - this is for a top-tier role
+4. YOU MUST USE THE EXACT KEYWORDS provided - do not change their spelling or form.
+5. Naturally incorporate 2-4 keywords from the list.
+6. Keep the core meaning - never fabricate experience
+7. Sound impressive but professional - this is for a top-tier role
 
 Example transformations:
 - "Worked on website" → "Engineered scalable React web application serving 50K+ users with 99.9% uptime"
@@ -97,9 +98,9 @@ Respond with ONLY the optimized bullet point.
     optimizeSummary: (resumeData, targetKeywords, jdText) => `
 You are an expert resume writer specializing in ATS-optimized professional summaries.
 
-Write a POWERFUL 3-4 sentence professional summary that will score highly on ATS systems.
+Write a POWERFUL 4-5 sentence professional summary that will score highly on ATS systems.
 
-Target Keywords to Include (use at least 5): ${targetKeywords.join(', ')}
+Target Keywords to Include (use at least 6-8): ${targetKeywords.join(', ')}
 
 Candidate Information:
 - Current/Recent Role: ${resumeData.experience?.[0]?.role || 'Software Professional'}
@@ -108,14 +109,14 @@ Candidate Information:
 - Tools: ${resumeData.skills?.tools?.join(', ') || 'Modern development tools'}
 - Number of Roles: ${resumeData.experience?.length || 1}
 
-Job Context: ${jdText?.substring(0, 300) || 'Technical role'}
+Job Context: ${jdText?.substring(0, 400) || 'Technical role'}
 
 RULES:
-1. 60-80 words maximum
+1. 80-100 words maximum
 2. NO first person ("I am", "I have")
-3. Include 5+ target keywords naturally woven in
+3. Include 6+ target keywords naturally woven in. USE EXACT KEYWORDS.
 4. Lead with years of experience and core expertise
-5. Mention 2-3 key technologies/skills
+5. Mention 3-4 key technologies/skills
 6. End with value proposition or achievement
 7. Sound confident and accomplished
 
@@ -124,6 +125,7 @@ Example format:
 
 Respond with ONLY the summary text.
 `,
+
 
     generateSummary: (resumeData, targetKeywords) => `
 You are a professional resume writer.
@@ -256,19 +258,23 @@ exports.analyzeJD = async (req, res) => {
  * - Methodologies: 20% weight
  */
 const WEIGHTS = {
-    technical: 0.40,
-    tools: 0.25,
+    technical: 0.35,
+    tools: 0.20,
     soft: 0.15,
-    methodologies: 0.20
+    methodologies: 0.15,
+    formatting: 0.15 // New criteria for formatting & metrics
 };
 
 function calculateCategoryScore(resumeText, keywords) {
-    if (!keywords || keywords.length === 0) return { score: 100, matched: [], missing: [] };
+    if (!keywords || keywords.length === 0) return { score: 0, matched: [], missing: [] }; // FIX: Return 0 if no keywords found in JD
 
     const matched = [];
     const missing = [];
 
     keywords.forEach(keyword => {
+        // More strict matching: word boundary or start/end of string
+        // This prevents "java" matching "javascript" if not careful, but we want to be generous for partial matches in some cases
+        // Using simple case-insensitive match for now, but could be stricter
         const regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
         if (regex.test(resumeText)) {
             matched.push(keyword);
@@ -277,8 +283,41 @@ function calculateCategoryScore(resumeText, keywords) {
         }
     });
 
-    const score = keywords.length > 0 ? (matched.length / keywords.length) * 100 : 100;
+    const score = keywords.length > 0 ? (matched.length / keywords.length) * 100 : 0;
     return { score, matched, missing };
+}
+
+// Helper: Check for measurable results (metrics)
+function calculateMetricsScore(resume) {
+    let bulletCount = 0;
+    let metricCount = 0;
+    const metricRegex = /\d%|\$\d|\d+\+|\d+\s(users|clients|customers|revenue|reduced|increased|saved)/i;
+
+    if (resume.experience) {
+        resume.experience.forEach(exp => {
+            exp.bullets?.forEach(b => {
+                bulletCount++;
+                const text = b.active ? b.rewritten || b.original : b.original;
+                if (metricRegex.test(text)) metricCount++;
+            });
+        });
+    }
+
+    if (resume.projects) {
+        resume.projects.forEach(proj => {
+            proj.bullets?.forEach(b => {
+                bulletCount++;
+                const text = b.active ? b.rewritten || b.original : b.original;
+                if (metricRegex.test(text)) metricCount++;
+            });
+        });
+    }
+
+    if (bulletCount === 0) return 0;
+
+    // Target: 40% of bullets should have metrics for a perfect score
+    const density = metricCount / bulletCount;
+    return Math.min((density / 0.4) * 100, 100);
 }
 
 // @desc    Calculate ATS Score
@@ -306,6 +345,8 @@ exports.calculateATSScore = async (req, res) => {
             if (!keywords && resume.atsData?.extractedKeywords) {
                 keywords = resume.atsData.extractedKeywords;
             }
+        } else {
+            resume = resumeData; // If checking pending data
         }
 
         if (!keywords) {
@@ -325,13 +366,20 @@ exports.calculateATSScore = async (req, res) => {
         const softResult = calculateCategoryScore(resumeText, keywords.soft || keywords.softSkills);
         const methodResult = calculateCategoryScore(resumeText, keywords.methodologies);
 
+        // Calculate Metrics/Formatting Score
+        const metricsScore = calculateMetricsScore(data);
+
         // Weighted final score
-        const finalScore = Math.round(
+        let finalScore = Math.round(
             technicalResult.score * WEIGHTS.technical +
             toolsResult.score * WEIGHTS.tools +
             softResult.score * WEIGHTS.soft +
-            methodResult.score * WEIGHTS.methodologies
+            methodResult.score * WEIGHTS.methodologies +
+            metricsScore * WEIGHTS.formatting
         );
+
+        // Cap at 100
+        finalScore = Math.min(finalScore, 100);
 
         // Combine results
         const allMatched = [
@@ -340,6 +388,7 @@ exports.calculateATSScore = async (req, res) => {
             ...softResult.matched,
             ...methodResult.matched
         ];
+
         const allMissing = [
             ...technicalResult.missing,
             ...toolsResult.missing,
@@ -652,25 +701,46 @@ exports.optimizeResume = async (req, res) => {
 
         // Step 5: Auto-add missing skills to skills section
         console.log('🔧 Step 5: Enhancing Skills Section...');
-        resume.skills = resume.skills || { technical: [], tools: [] };
+        resume.skills = resume.skills || { technical: [], tools: [], soft: [] };
 
-        // Add missing technical skills
+        // Add missing technical skills (MAX 15 to ensure high coverage)
         const currentTechnical = (resume.skills.technical || []).map(s => s.toLowerCase());
         const missingTechnical = technicalSkills.filter(s =>
             !currentTechnical.includes(s.toLowerCase())
-        ).slice(0, 5);
+        ).slice(0, 15);
 
         resume.skills.technical = [...(resume.skills.technical || []), ...missingTechnical];
 
-        // Add missing tools
+        // Add missing tools (MAX 10)
         const currentTools = (resume.skills.tools || []).map(s => s.toLowerCase());
         const missingTools = tools.filter(s =>
             !currentTools.includes(s.toLowerCase())
-        ).slice(0, 4);
+        ).slice(0, 10);
 
         resume.skills.tools = [...(resume.skills.tools || []), ...missingTools];
 
-        console.log(`  ✅ Added ${missingTechnical.length} technical skills and ${missingTools.length} tools`);
+        // Add missing soft skills (MAX 8)
+        const currentSoft = (resume.skills.soft || []).map(s => s.toLowerCase());
+        const missingSoft = softSkills.filter(s =>
+            !currentSoft.includes(s.toLowerCase())
+        ).slice(0, 8);
+
+        resume.skills.soft = [...(resume.skills.soft || []), ...missingSoft];
+
+        // Add missing methodologies to technical/soft (since strict schema doesn't have methodologies)
+        const missingMethodologies = methodologies.filter(s =>
+            !currentTechnical.includes(s.toLowerCase()) && !currentTools.includes(s.toLowerCase())
+        ).slice(0, 5);
+
+        // Add methodologies to technical
+        resume.skills.technical = [...resume.skills.technical, ...missingMethodologies];
+
+        // Deduplicate arrays
+        resume.skills.technical = [...new Set(resume.skills.technical)];
+        resume.skills.tools = [...new Set(resume.skills.tools)];
+        resume.skills.soft = [...new Set(resume.skills.soft)];
+
+        console.log(`  ✅ Added skills: ${missingTechnical.length} tech, ${missingTools.length} tools, ${missingSoft.length} soft, ${missingMethodologies.length} methods`);
 
         // Step 6: Recalculate ATS score with optimized content
         console.log('📊 Step 6: Calculating New ATS Score...');
@@ -723,7 +793,9 @@ exports.optimizeResume = async (req, res) => {
                 keywords,
                 skillsAdded: {
                     technical: missingTechnical,
-                    tools: missingTools
+                    tools: missingTools,
+                    soft: missingSoft,
+                    methodologies: missingMethodologies
                 },
                 summary: resume.personalInfo?.summary,
                 matchedKeywords: newMatched,

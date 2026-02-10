@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Resume Template Gallery - ResumeAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .template-card:hover .overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="relative flex flex-col w-full min-h-screen">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-background-dark border-b border-gray-200 dark:border-gray-800">
+<div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl font-bold">description</span>
+<h2 class="text-[#111318] dark:text-white text-xl font-bold tracking-tight">ResumeAI</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-gray-600 dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors" href="#">Templates</a>
+<a class="text-gray-600 dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors" href="#">My Resumes</a>
+<a class="text-gray-600 dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors" href="#">Pricing</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">search</span>
+<input class="bg-gray-100 dark:bg-gray-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search templates..." type="text"/>
+</div>
+<button class="flex items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold transition-all hover:bg-primary/90">
+                        Sign In
+                    </button>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto w-full px-6 py-10">
+<!-- Hero Heading -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div class="max-w-2xl">
+<h1 class="text-[#111318] dark:text-white text-5xl font-black leading-tight tracking-tight mb-4">Choose your template</h1>
+<p class="text-gray-500 dark:text-gray-400 text-lg">Pick a professional layout to start your AI-powered resume building. Each template is ATS-optimized and fully customizable.</p>
+</div>
+<button class="flex shrink-0 items-center gap-2 rounded-lg h-12 px-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-[#111318] dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 transition-all">
+<span class="material-symbols-outlined text-lg">add</span>
+                    Start with Blank
+                </button>
+</div>
+<!-- Filters -->
+<div class="flex items-center gap-3 overflow-x-auto pb-6 no-scrollbar">
+<button class="px-5 py-2 rounded-full bg-primary text-white text-sm font-semibold whitespace-nowrap">All Templates</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-sm font-medium whitespace-nowrap hover:border-primary/50 transition-colors">Creative</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-sm font-medium whitespace-nowrap hover:border-primary/50 transition-colors">Executive</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-sm font-medium whitespace-nowrap hover:border-primary/50 transition-colors">Tech</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-sm font-medium whitespace-nowrap hover:border-primary/50 transition-colors">Academic</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-sm font-medium whitespace-nowrap hover:border-primary/50 transition-colors">Student</button>
+<button class="px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-sm font-medium whitespace-nowrap hover:border-primary/50 transition-colors">Minimalist</button>
+</div>
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold text-[#111318] dark:text-white">Recommended for You</h3>
+<span class="text-sm text-gray-500">Showing 24 templates</span>
+</div>
+<!-- Template Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<!-- Card 1 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Modern professional resume layout with clean sidebar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAhYSi7EkrgdxoCGVgtthr8iKJRitztsRFfVUVy882rU2ZCeuSjGfcNSe_JXocW4LyR1uoyQa29AVFpae9j4FLl1sAtBxdqMurDDkpNDzHtlLQx2p9Ai8VPKPeOUBA-OuR3wWx-Bm92CDadg1b9GKNJ61wDT4NCyMFdP-GevE29lXOHtgoVRCZ2A3JLDL8cJ6izisKF4cH3oA5Y2ZIAs9X8bC7VUVbwvqrWNVtxAakP6t1nC2Z5BSGW6Gq65eLjbQ_d1_xO_JPYNklL');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm hover:bg-primary/90 transition-all">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm hover:bg-white/30 transition-all">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest mb-1">Most Popular</span>
+<h4 class="text-[#111318] dark:text-white font-bold">The Modern Professional</h4>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Creative resume template with bold typography" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBjWBA8glcTooywyHGtep1AsMNlQyCpu5RzEthfQaFMzHxx1eRpRF6BmQajt7g1VqrbeYjX3lVCQ2SvJWPIEOl7Ah86Dtlurf2DbE_wuPvaohGz_L-N4QnTGczmQ3J5XHg5CPV0G_jha8kG0q0c5iKOiDtY1ZgMDYZdyxUZl2XzvsC13erL91bu9z9zAxNfA-MI4cuxYHesyfUTxHTJ9SYdO8z9AWfyJ7x-bD3aSYwlpi9-KZ4nvvhdQ_zCr3lWMoqsdo3OLtomXflJ');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Creative</span>
+<h4 class="text-[#111318] dark:text-white font-bold">Design Vanguard</h4>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Minimalist resume layout with thin fonts" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAl9YJQozF_VjDhJ0Z9ieTwVGbSCFFa45EzAhTGo6PWN-Rc79CtfvDjcVes3cmWv1u7KZyF5qDIw4bWP1a1Y7Hwjskmnn2uHyypkd17E8NvDi9R3H7AufiYx6mHYrF9uqEqmvjc8L6BRDk8kEi19pKd49SMTQYLTAE5ptouhX3bZ-wZx9oLD9dhsWPKhksz1DerPcvx7wFIr2nlzV0oMzqixz9aaF6UwAFY1Yi-XqQd6CTWPPZDpJihuP9KmJFvO6czpDEfJQYk28Yw');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Minimalist</span>
+<h4 class="text-[#111318] dark:text-white font-bold">Sleek Minimalist</h4>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Executive resume template with traditional serif fonts" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBkEcqv4odGHDStqOpA2jPARRM8UygnuuscNOELSt8-O9F9o3TUHTWwGsl0Nd4oKK9QKOSpYHLIDo_eVKPM0IgayLErB2WT0bzPx0d68KCDNqesrlFx-uxUix0OkWtis3sWorhCobz3FUv96pYEpee1UPC8oPp6JxAstyFkrguf9HDXjvDuCkTNCVjNENdm__oIJwFBmDHI9qcnE-dhWPEUsPbIMSx5dhIjuuyBA-plLQWPJB9xRCVIe7Kg5wzb3nNbtxZ4PqUtnaq2');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Executive</span>
+<h4 class="text-[#111318] dark:text-white font-bold">The CEO Suite</h4>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Academic CV with multi-page structure" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAgX1VWt3DiKtxxRWD6BxPxkjCLwivwGUSoBO53IW87kByZq6_RoR-yDBOyiKntv9jKCDFavexMD0aaSxcCPlRG68xkMHzBPL8uJtjc7lnKgZvHhDpSoCLn8bK-szK-c2mIHN5NnZI-yA2Eh-bUBODeaMlrc7zsk_l99RSoUKPE2vx0R5zsxX3JI5ftHnHdyKzH8vu4gP5F2xAHpCA0aZH-cWr6WCFsBoDRkLTor9JSqJzkpOpUpSYkAbyuIFlQeGna3AgrNfY_EqfO');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Academic</span>
+<h4 class="text-[#111318] dark:text-white font-bold">Research Scholar</h4>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Tech resume layout with skills visualization" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCdEapOuTKHfbU-265f86Ilk6uFlzvGda1Du8Cewsa_y6ScnyWmUQImBWz8B9njsmG3ai7Wvgkdge4D0j5MrNRnp5-xhX-7lnY0urIj2ColvMbVAuBdEVPlw2ODD9TD0MwUX4Fx5l9ljkFF3QrmOJzxvQzq9qNP9WpxiVH3hNrnnTMavZIGHMGHiRdkxRqEmp_NuH1_xJ0yQiBEoTqkJfOTvYam8VsmnGJv4K79bw0_LMMyZawWEIuCAsTNuKBLyrIJaroyk7CUWen6');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest mb-1">Recommended</span>
+<h4 class="text-[#111318] dark:text-white font-bold">Software Engineer V1</h4>
+</div>
+</div>
+<!-- Card 7 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Clean student resume template for internships" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBlO0n1Bcr5o9Mt-U9RMnycaobw094fOsQRhNVugH2ZC2snrl8wVXWpHhl35SmYfHDOnn60WGg-q-4Vi5_4D7Yf4eXifVqKc5J8JaAlU08SmWbb6sGlUk3Lseu8hZa4EZWUg9i0pyQwAKq-LmJqO2z4Y47iL-oeurujVIXcUccBqlggXIznBP9TzTueKTgti8P3yOHNICICHBV5GRL0ZnNGudeDTqjh4-RogejkNcFEkn2CBkSC7rbWysiSaYuXRwcrAK6OTxLUrxI8');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Student</span>
+<h4 class="text-[#111318] dark:text-white font-bold">Entry Level Slate</h4>
+</div>
+</div>
+<!-- Card 8 -->
+<div class="group relative flex flex-col gap-3">
+<div class="template-card relative aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200 dark:border-gray-800 shadow-sm transition-all group-hover:shadow-xl group-hover:-translate-y-1">
+<div class="w-full h-full bg-cover bg-center" data-alt="Corporate resume template with professional border" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0l8_9r81fEvvhD5Hkc7kWiFuryYxYQa5oJ2BzfxtIRvxvfcSK4EpsJuuCqgfbN7_FSIdVOMcjeBKHTdYUl9bU4mquTjAuC6TxLqT1npcoLisS0Zc7xsZ28XN6D-F9iTCwZDhq4VJ94ttvfHDLW15_FdnKxR51iIV1pGui2wDToh2hxkzV4NBQCNnt8pB88W9tXkupkY2M_NyOst7P66eEpkby_wr1pYQD2Bk021qjMYDQgZ1CgEXcQ7msxAvusKg2JShk4bYI9GgB');"></div>
+<div class="overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity flex flex-col items-center justify-center p-6 gap-4">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-bold text-sm">Select Template</button>
+<button class="w-full bg-white/20 backdrop-blur-md text-white py-3 rounded-lg font-bold text-sm">Live Preview</button>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Executive</span>
+<h4 class="text-[#111318] dark:text-white font-bold">Global Strategist</h4>
+</div>
+</div>
+</div>
+<!-- More results loading indicator -->
+<div class="mt-16 flex flex-col items-center gap-4">
+<button class="px-8 py-3 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 font-bold hover:bg-gray-50 transition-all">Load More Templates</button>
+<p class="text-gray-400 text-sm">Showing 8 of 24 professional templates</p>
+</div>
+</main>
+<!-- Minimal Footer -->
+<footer class="mt-auto border-t border-gray-200 dark:border-gray-800 py-10 bg-white dark:bg-background-dark">
+<div class="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-xl">description</span>
+<span class="font-bold">ResumeAI</span>
+</div>
+<div class="flex items-center gap-8 text-sm text-gray-500 font-medium">
+<a class="hover:text-primary" href="#">Terms</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Help Center</a>
+<a class="hover:text-primary" href="#">AI Policy</a>
+</div>
+<div class="text-sm text-gray-400">
+                    © 2024 ResumeAI Inc.
+                </div>
+</div>
+</footer>
+</div>
+</body></html>
