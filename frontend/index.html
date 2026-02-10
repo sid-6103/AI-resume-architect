@@ -1,542 +1,990 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareerForge Pro - ATS-Proof Resume Generator & Job Matcher</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ResumeAI | AI-Powered Resume Builder</title>
     <meta name="description"
-        content="Build ATS-friendly resumes in minutes using advanced artificial intelligence. Generate cover letters, download PDFs, and land your dream job.">
+        content="Build ATS-friendly resumes in minutes using advanced AI. Generate cover letters, download PDFs, and land your dream job.">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
 </head>
 
-<body>
-    <div class="background-glow"></div>
+<body class="bg-background-light text-[#111318] antialiased font-sans">
 
-    <!-- ===========================================
-         LANDING PAGE
-         =========================================== -->
-    <div class="container" id="landing-page">
-        <header>
-            <nav>
-                <div class="logo">CareerForge <span class="pro-badge">Pro</span></div>
-                <div class="nav-links">
-                    <a href="#features">Features</a>
-                    <a href="#how-it-works">How it Works</a>
-                    <a href="#pricing">Pricing</a>
-                    <a href="#" class="btn-sm btn-ghost" id="nav-dashboard-btn">Dashboard</a>
-                    <a href="#" class="btn-sm btn-ghost" id="nav-login-btn">Log In</a>
-                    <a href="#" class="btn-secondary" id="nav-builder-btn">Open Builder</a>
+    <!-- =========================================== LANDING PAGE =========================================== -->
+    <div id="landing-page">
+        <header class="sticky top-0 z-50 w-full border-b border-[#f0f2f4] bg-white/80 backdrop-blur-md">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="text-primary">
+                        <svg fill="none" height="32" viewBox="0 0 48 48" width="32" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z"
+                                fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold tracking-tight">ResumeAI</h2>
                 </div>
-            </nav>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#features">Features</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#how-it-works">How it
+                        Works</a>
+                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#pricing">Pricing</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button
+                        class="hidden items-center gap-2 text-sm font-bold px-4 py-2 hover:text-primary transition-colors"
+                        id="nav-dashboard-btn">
+                        <span class="material-symbols-outlined text-[18px]">dashboard</span> Dashboard
+                    </button>
+                    <button class="text-sm font-bold px-4 py-2 hover:text-primary transition-colors"
+                        id="nav-login-btn">Login</button>
+                    <button
+                        class="text-sm font-bold px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-all"
+                        id="nav-signup-btn">Sign Up</button>
+                    <button
+                        class="bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-all shadow-sm"
+                        id="nav-builder-btn">Build My Resume</button>
+                </div>
+            </div>
         </header>
 
-        <main>
-            <section class="hero">
-                <div class="hero-content">
-                    <h1>Craft Your Perfect Career<br>with <span class="gradient-text">AI Precision</span></h1>
-                    <p class="subtitle">Build ATS-friendly resumes, generate cover letters, and download pixel-perfect
-                        PDFs — all powered by advanced AI.</p>
-                    <div class="cta-group">
-                        <button class="btn-primary" id="start-btn">
-                            <span>✨</span> Get Started Now
-                        </button>
-                        <button class="btn-outline" id="demo-btn">See Demo</button>
+        <main class="flex flex-col">
+            <!-- Hero Section -->
+            <section class="relative overflow-hidden pt-16 pb-12 md:pt-24 md:pb-20">
+                <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="flex flex-col gap-8 max-w-xl">
+                        <div class="flex flex-col gap-4">
+                            <h1 class="text-5xl md:text-6xl font-black leading-[1.1] tracking-tight">
+                                Land your dream job with an <span class="text-primary">AI-powered</span> resume.
+                            </h1>
+                            <p class="text-lg text-[#616f89] leading-relaxed">
+                                Our AI writes professional bullet points in seconds. Choose a template, let the AI work
+                                its magic, and download your high-converting resume.
+                            </p>
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex flex-wrap gap-3">
+                                <button id="start-btn"
+                                    class="h-14 px-8 bg-primary text-white rounded-xl font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+                                    Build My Resume
+                                </button>
+                                <button id="demo-btn"
+                                    class="h-14 px-8 border-2 border-[#dbdfe6] rounded-xl font-bold text-lg hover:bg-gray-50 transition-all">
+                                    View Templates
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2 px-1">
+                                <span class="material-symbols-outlined text-green-500 text-sm">check_circle</span>
+                                <p class="text-[#616f89] text-sm font-medium">Join 10,000+ professionals landing jobs
+                                    daily</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Resume Mockup -->
+                    <div
+                        class="relative w-full aspect-square md:aspect-video lg:aspect-square flex items-center justify-center">
+                        <div class="absolute inset-0 bg-primary/5 rounded-full blur-3xl"></div>
+                        <div
+                            class="relative w-full max-w-[500px] bg-white rounded-2xl shadow-2xl border border-[#f0f2f4] overflow-hidden">
+                            <div class="h-8 bg-[#f8fafc] flex items-center gap-1.5 px-4 border-b border-[#f0f2f4]">
+                                <div class="size-2 rounded-full bg-red-400"></div>
+                                <div class="size-2 rounded-full bg-amber-400"></div>
+                                <div class="size-2 rounded-full bg-emerald-400"></div>
+                            </div>
+                            <div class="p-8 flex flex-col gap-6">
+                                <div class="flex justify-between items-start">
+                                    <div class="space-y-2">
+                                        <div class="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+                                        <div class="h-3 w-48 bg-gray-100 rounded"></div>
+                                    </div>
+                                    <div class="size-16 bg-gray-50 rounded-lg flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-gray-300">account_circle</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="h-4 w-20 bg-primary/20 rounded"></div>
+                                    <div class="space-y-2">
+                                        <div class="h-3 w-full bg-gray-100 rounded"></div>
+                                        <div class="h-3 w-full bg-gray-100 rounded"></div>
+                                        <div class="h-3 w-2/3 bg-gray-100 rounded"></div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-primary/5 rounded-lg border border-primary/20 relative">
+                                    <div
+                                        class="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-wider">
+                                        <span class="material-symbols-outlined text-xs">auto_awesome</span>
+                                        AI Writing Experience
+                                    </div>
+                                    <div class="h-3 w-full bg-primary/10 rounded mb-2"></div>
+                                    <div class="h-3 w-4/5 bg-primary/10 rounded"></div>
+                                    <div
+                                        class="absolute bottom-2 right-2 size-4 bg-primary rounded-full animate-ping opacity-20">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section class="features" id="features">
-                <div class="feature-card glass">
-                    <div class="icon">🎯</div>
-                    <h3>ATS Score Analysis</h3>
-                    <p>Get instant ATS compatibility scores and see exactly which keywords you're missing.</p>
+            <!-- Templates Section -->
+            <section class="py-20 bg-white" id="templates-section">
+                <div class="max-w-7xl mx-auto px-6">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl font-black tracking-tight mb-4">Ready-Made Templates</h2>
+                        <p class="text-lg text-[#616f89] max-w-2xl mx-auto">Choose a professionally designed template
+                            and customize it with your details. Each template is ATS-optimized and recruiter-approved.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                        <!-- Template 1: Software Engineer -->
+                        <div
+                            class="group relative bg-background-light rounded-2xl border border-[#dbdfe6] overflow-hidden hover:border-primary/50 hover:shadow-xl transition-all duration-300">
+                            <div class="p-6">
+                                <div class="bg-white rounded-xl border border-gray-100 p-5 mb-5 shadow-sm"
+                                    style="font-size:0.65rem; line-height:1.5; color:#333;">
+                                    <div style="text-align:center; margin-bottom:8px;">
+                                        <div style="font-size:1rem; font-weight:800; color:#111;">Alex Johnson</div>
+                                        <div style="font-size:0.55rem; color:#666;">alex@email.com • (555) 123-4567 •
+                                            San Francisco, CA</div>
+                                    </div>
+                                    <div style="border-top:2px solid #135bec; margin:6px 0;"></div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin-bottom:3px;">
+                                        PROFESSIONAL SUMMARY</div>
+                                    <div style="color:#555; font-size:0.55rem;">Full-stack developer with 5+ years
+                                        building scalable web applications...</div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin:6px 0 3px;">
+                                        EXPERIENCE</div>
+                                    <div style="font-weight:600;">Senior Software Engineer — Google</div>
+                                    <div style="color:#888; font-size:0.5rem;">Jan 2021 - Present</div>
+                                    <div style="color:#555; font-size:0.55rem;">• Led development of microservices
+                                        reducing latency by 40%</div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin:6px 0 3px;">
+                                        SKILLS</div>
+                                    <div style="color:#555; font-size:0.55rem;">React, Node.js, Python, AWS, Docker,
+                                        PostgreSQL</div>
+                                </div>
+                                <h3 class="text-lg font-bold mb-1">Software Engineer</h3>
+                                <p class="text-sm text-[#616f89] mb-4">Perfect for tech professionals with development
+                                    experience.</p>
+                                <button
+                                    class="use-template-btn w-full h-11 bg-primary text-white rounded-lg font-bold text-sm hover:bg-blue-700 transition-all"
+                                    data-template="software-engineer">
+                                    Use This Template
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Template 2: Marketing Manager -->
+                        <div
+                            class="group relative bg-background-light rounded-2xl border border-[#dbdfe6] overflow-hidden hover:border-primary/50 hover:shadow-xl transition-all duration-300">
+                            <div class="p-6">
+                                <div class="bg-white rounded-xl border border-gray-100 p-5 mb-5 shadow-sm"
+                                    style="font-size:0.65rem; line-height:1.5; color:#333;">
+                                    <div style="text-align:center; margin-bottom:8px;">
+                                        <div style="font-size:1rem; font-weight:800; color:#111;">Sarah Mitchell</div>
+                                        <div style="font-size:0.55rem; color:#666;">sarah@email.com • (555) 987-6543 •
+                                            New York, NY</div>
+                                    </div>
+                                    <div style="border-top:2px solid #135bec; margin:6px 0;"></div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin-bottom:3px;">
+                                        PROFESSIONAL SUMMARY</div>
+                                    <div style="color:#555; font-size:0.55rem;">Results-driven marketing leader with 7+
+                                        years driving brand strategy...</div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin:6px 0 3px;">
+                                        EXPERIENCE</div>
+                                    <div style="font-weight:600;">Marketing Director — Nike</div>
+                                    <div style="color:#888; font-size:0.5rem;">Mar 2020 - Present</div>
+                                    <div style="color:#555; font-size:0.55rem;">• Increased brand engagement by 65%
+                                        through digital campaigns</div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin:6px 0 3px;">
+                                        SKILLS</div>
+                                    <div style="color:#555; font-size:0.55rem;">SEO/SEM, Google Analytics, HubSpot,
+                                        Content Strategy</div>
+                                </div>
+                                <h3 class="text-lg font-bold mb-1">Marketing Manager</h3>
+                                <p class="text-sm text-[#616f89] mb-4">Ideal for marketing and brand strategy
+                                    professionals.</p>
+                                <button
+                                    class="use-template-btn w-full h-11 bg-primary text-white rounded-lg font-bold text-sm hover:bg-blue-700 transition-all"
+                                    data-template="marketing-manager">
+                                    Use This Template
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Template 3: Data Scientist -->
+                        <div
+                            class="group relative bg-background-light rounded-2xl border border-[#dbdfe6] overflow-hidden hover:border-primary/50 hover:shadow-xl transition-all duration-300">
+                            <div class="p-6">
+                                <div class="bg-white rounded-xl border border-gray-100 p-5 mb-5 shadow-sm"
+                                    style="font-size:0.65rem; line-height:1.5; color:#333;">
+                                    <div style="text-align:center; margin-bottom:8px;">
+                                        <div style="font-size:1rem; font-weight:800; color:#111;">Michael Chen</div>
+                                        <div style="font-size:0.55rem; color:#666;">michael@email.com • (555) 456-7890 •
+                                            Seattle, WA</div>
+                                    </div>
+                                    <div style="border-top:2px solid #135bec; margin:6px 0;"></div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin-bottom:3px;">
+                                        PROFESSIONAL SUMMARY</div>
+                                    <div style="color:#555; font-size:0.55rem;">Data scientist with expertise in ML/AI,
+                                        delivering insights for Fortune 500...</div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin:6px 0 3px;">
+                                        EXPERIENCE</div>
+                                    <div style="font-weight:600;">Senior Data Scientist — Amazon</div>
+                                    <div style="color:#888; font-size:0.5rem;">Jun 2019 - Present</div>
+                                    <div style="color:#555; font-size:0.55rem;">• Built ML models improving demand
+                                        forecasting accuracy by 35%</div>
+                                    <div style="font-weight:700; color:#135bec; font-size:0.6rem; margin:6px 0 3px;">
+                                        SKILLS</div>
+                                    <div style="color:#555; font-size:0.55rem;">Python, TensorFlow, SQL, Tableau,
+                                        Statistical Modeling</div>
+                                </div>
+                                <h3 class="text-lg font-bold mb-1">Data Scientist</h3>
+                                <p class="text-sm text-[#616f89] mb-4">Built for data and analytics professionals.</p>
+                                <button
+                                    class="use-template-btn w-full h-11 bg-primary text-white rounded-lg font-bold text-sm hover:bg-blue-700 transition-all"
+                                    data-template="data-scientist">
+                                    Use This Template
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-                <div class="feature-card glass">
-                    <div class="icon">✨</div>
-                    <h3>AI Bullet Rewriter</h3>
-                    <p>Transform weak bullet points into powerful, keyword-optimized achievements.</p>
-                </div>
-                <div class="feature-card glass">
-                    <div class="icon">🚀</div>
-                    <h3>Magic Optimization</h3>
-                    <p>One-click optimization that analyzes JD, rewrites bullets, and boosts your score.</p>
-                </div>
-                <div class="feature-card glass">
-                    <div class="icon">📄</div>
-                    <h3>PDF Generation</h3>
-                    <p>Download pixel-perfect, multi-page PDFs that look great on any screen or printer.</p>
-                </div>
-                <div class="feature-card glass">
-                    <div class="icon">💌</div>
-                    <h3>Cover Letters</h3>
-                    <p>AI-generated cover letters tailored to each job description with editable templates.</p>
-                </div>
-                <div class="feature-card glass">
-                    <div class="icon">📊</div>
-                    <h3>Dashboard</h3>
-                    <p>Manage all your resumes, track ATS scores, and organize your job search.</p>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-20 bg-white" id="features">
+                <div class="max-w-7xl mx-auto px-6">
+                    <div class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+                        <div class="max-w-2xl space-y-4">
+                            <h2 class="text-3xl md:text-4xl font-black tracking-tight" id="how-it-works">How it Works
+                            </h2>
+                            <p class="text-lg text-[#616f89]">Creating a professional, recruiter-ready resume has never
+                                been easier or faster.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div
+                            class="group p-8 rounded-2xl border border-[#dbdfe6] bg-background-light hover:border-primary/50 transition-all duration-300">
+                            <div
+                                class="size-14 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm mb-6 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-3xl">dashboard</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Paste Job Description</h3>
+                            <p class="text-[#616f89] leading-relaxed">Paste the target JD and let our AI extract
+                                keywords and optimize your resume for ATS systems.</p>
+                        </div>
+                        <div
+                            class="group p-8 rounded-2xl border border-[#dbdfe6] bg-background-light hover:border-primary/50 transition-all duration-300">
+                            <div
+                                class="size-14 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm mb-6 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-3xl">auto_awesome</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">AI Magic Optimization</h3>
+                            <p class="text-[#616f89] leading-relaxed">One-click AI optimization rewrites your bullets,
+                                generates summaries, and boosts ATS score instantly.</p>
+                        </div>
+                        <div
+                            class="group p-8 rounded-2xl border border-[#dbdfe6] bg-background-light hover:border-primary/50 transition-all duration-300">
+                            <div
+                                class="size-14 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm mb-6 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-3xl">download</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Download & Apply</h3>
+                            <p class="text-[#616f89] leading-relaxed">Export to PDF, generate a tailored cover letter,
+                                and apply with confidence to your dream job.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- Pricing Section -->
-            <section class="pricing-section" id="pricing">
-                <h2>Choose Your <span class="gradient-text">Plan</span></h2>
-                <div class="pricing-cards">
-                    <div class="pricing-card glass">
-                        <div class="pricing-tier">Free</div>
-                        <div class="pricing-price">$0<span>/forever</span></div>
-                        <ul class="pricing-features">
-                            <li>✓ 1 Resume</li>
-                            <li>✓ ATS Score Analysis</li>
-                            <li>✓ AI Bullet Rewriting</li>
-                            <li>✓ Live Preview</li>
-                            <li class="disabled">✗ Premium Templates</li>
-                            <li class="disabled">✗ Cover Letters</li>
-                            <li class="disabled">✗ PDF Download</li>
-                        </ul>
-                        <button class="btn-outline" id="free-plan-btn">Current Plan</button>
+            <section class="py-20 px-6" id="pricing">
+                <div
+                    class="max-w-5xl mx-auto rounded-3xl bg-primary px-8 py-16 md:px-20 text-center text-white relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-10">
+                        <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                            <path d="M0 100 C 20 0 50 0 100 100" fill="transparent" stroke="white" stroke-width="0.5">
+                            </path>
+                            <path d="M0 0 C 30 100 70 100 100 0" fill="transparent" stroke="white" stroke-width="0.5">
+                            </path>
+                        </svg>
                     </div>
-                    <div class="pricing-card glass featured">
-                        <div class="pricing-popular">Most Popular</div>
-                        <div class="pricing-tier">Pro</div>
-                        <div class="pricing-price">$9<span>/month</span></div>
-                        <ul class="pricing-features">
-                            <li>✓ Unlimited Resumes</li>
-                            <li>✓ ATS Score Analysis</li>
-                            <li>✓ AI Bullet Rewriting</li>
-                            <li>✓ Live Preview</li>
-                            <li>✓ Premium Templates</li>
-                            <li>✓ AI Cover Letters</li>
-                            <li>✓ PDF Downloads</li>
-                            <li>✓ Priority Support</li>
-                        </ul>
-                        <button class="btn-primary" id="pro-plan-btn">Upgrade to Pro</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="how-it-works" id="how-it-works">
-                <h2>How It <span class="gradient-text">Works</span></h2>
-                <div class="steps">
-                    <div class="step glass">
-                        <div class="step-number">1</div>
-                        <h3>Paste Job Description</h3>
-                        <p>Copy the JD you're targeting for AI analysis</p>
-                    </div>
-                    <div class="step glass">
-                        <div class="step-number">2</div>
-                        <h3>Build Your Resume</h3>
-                        <p>Enter your experience with live preview</p>
-                    </div>
-                    <div class="step glass">
-                        <div class="step-number">3</div>
-                        <h3>AI Optimization</h3>
-                        <p>Click Magic Button to boost ATS score</p>
-                    </div>
-                    <div class="step glass">
-                        <div class="step-number">4</div>
-                        <h3>Download & Apply</h3>
-                        <p>Export PDF and generate cover letter</p>
+                    <div class="relative z-10 space-y-8">
+                        <h2 class="text-4xl md:text-5xl font-black leading-tight">Ready to upgrade your career?</h2>
+                        <p class="text-lg opacity-90 max-w-2xl mx-auto">Don't let a poorly formatted resume hold you
+                            back. Start building your professional resume in minutes.</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                            <button id="pro-plan-btn"
+                                class="h-14 px-10 bg-white text-primary rounded-xl font-bold text-lg hover:bg-gray-100 transition-all">
+                                Upgrade to Pro — $9/mo
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-[#f0f2f4] py-12">
+            <div class="max-w-7xl mx-auto px-6">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-[#f0f2f4] pb-12 mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="text-primary">
+                            <svg fill="none" height="24" viewBox="0 0 48 48" width="24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z"
+                                    fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold tracking-tight">ResumeAI</h2>
+                    </div>
+                    <div class="flex gap-8">
+                        <a class="text-sm text-[#616f89] hover:text-primary" href="#">Twitter</a>
+                        <a class="text-sm text-[#616f89] hover:text-primary" href="#">LinkedIn</a>
+                        <a class="text-sm text-[#616f89] hover:text-primary" href="#">GitHub</a>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between gap-4">
+                    <p class="text-sm text-[#616f89]">© 2024 ResumeAI Inc. All rights reserved.</p>
+                    <div class="flex gap-6">
+                        <a class="text-sm text-[#616f89] hover:text-primary" href="#">Privacy Policy</a>
+                        <a class="text-sm text-[#616f89] hover:text-primary" href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <!-- ===========================================
-         RESUME BUILDER APP
-         =========================================== -->
-    <div class="builder-app hidden" id="builder-app">
+    <!-- =========================================== RESUME BUILDER APP =========================================== -->
+    <div class="hidden min-h-screen flex flex-col" id="builder-app">
         <!-- Builder Header -->
-        <header class="builder-header">
-            <div class="builder-nav">
-                <button class="back-btn" id="back-to-landing">
-                    ← Back
-                </button>
-                <div class="logo">Resume Builder</div>
-                <div class="header-actions">
-                    <div class="ats-score-badge" id="ats-badge">
-                        <span class="score-label">ATS Score</span>
-                        <span class="score-value" id="ats-score-display">--</span>
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+            <div class="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button id="back-to-landing"
+                        class="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back
+                    </button>
+                    <div class="h-6 w-[1px] bg-gray-200"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="text-primary"><svg fill="none" height="24" viewBox="0 0 48 48" width="24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z"
+                                    fill="currentColor"></path>
+                            </svg></div>
+                        <span class="text-lg font-bold tracking-tight">AI Resume Builder</span>
                     </div>
-                    <button class="btn-sm btn-ghost" id="cover-letter-btn" title="Generate Cover Letter">
-                        💌 Cover Letter
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="ats-badge" class="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-lg">
+                        <span class="text-xs font-bold text-gray-500 uppercase">ATS</span>
+                        <span class="text-sm font-black text-primary" id="ats-score-display">--</span>
+                    </div>
+                    <button id="save-resume-btn"
+                        class="flex items-center gap-2 h-9 px-4 bg-white border border-gray-200 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">save</span> Save
                     </button>
-                    <button class="btn-sm btn-ghost" id="download-pdf-btn" title="Download PDF">
-                        📥 PDF
+                    <button id="cover-letter-btn"
+                        class="flex items-center gap-2 h-9 px-4 bg-white border border-gray-200 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-50 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">mail</span> Cover Letter
                     </button>
-                    <button class="btn-magic" id="magic-btn">
-                        ✨ Magic Optimize
+                    <button id="download-pdf-btn"
+                        class="flex items-center gap-2 h-9 px-4 bg-primary text-white rounded-lg text-sm font-bold shadow-md hover:bg-blue-700 transition-all">
+                        <span class="material-symbols-outlined text-[18px]">download</span> Download PDF
+                    </button>
+                    <button id="magic-btn"
+                        class="flex items-center gap-2 h-9 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all">
+                        <span class="material-symbols-outlined text-[18px]">auto_awesome</span> AI Optimize
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- Split Screen Layout -->
-        <div class="builder-container">
-            <!-- Left Panel: Form -->
-            <div class="form-panel" id="form-panel">
-                <!-- JD Input Section -->
-                <div class="form-section glass">
-                    <div class="section-header">
-                        <h3>🎯 Target Job Description</h3>
-                        <button class="btn-sm btn-analyze" id="analyze-jd-btn">Analyze</button>
+        <!-- Builder Body -->
+        <div class="flex flex-1 overflow-hidden">
+
+            <!-- Center Form Panel -->
+            <div class="flex-1 overflow-y-auto bg-background-light" id="form-panel">
+                <div class="max-w-2xl mx-auto py-10 px-6">
+                    <div class="mb-8">
+                        <h1 class="text-2xl font-black tracking-tight mb-1">Let's build your professional story</h1>
+                        <p class="text-gray-500">Fill in your details or use our AI to generate professional content.
+                        </p>
                     </div>
-                    <textarea id="jd-input" class="form-input"
-                        placeholder="Paste the job description here to extract keywords and optimize your resume..."
-                        rows="4"></textarea>
-                    <div class="keywords-display hidden" id="keywords-display">
-                        <div class="keyword-category">
-                            <span class="category-label">Technical:</span>
-                            <div class="keyword-tags" id="tech-keywords"></div>
+
+                    <!-- JD Section (collapsible) -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-base font-bold">
+                                <span class="material-symbols-outlined text-primary text-[20px]">target</span> Target
+                                Job Description
+                            </h3>
+                            <button id="analyze-jd-btn"
+                                class="flex items-center gap-1 h-8 px-3 bg-primary/10 text-primary rounded-lg text-xs font-bold hover:bg-primary/20 transition-all">
+                                <span class="material-symbols-outlined text-[16px]">auto_awesome</span> Analyze
+                            </button>
                         </div>
-                        <div class="keyword-category">
-                            <span class="category-label">Tools:</span>
-                            <div class="keyword-tags" id="tool-keywords"></div>
+                        <textarea id="jd-input"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                            placeholder="Paste the job description here to extract keywords and optimize your resume..."
+                            rows="3"></textarea>
+                        <div class="hidden mt-4" id="keywords-display">
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase mr-1">Technical:</span>
+                                <div id="tech-keywords" class="flex flex-wrap gap-1"></div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase mr-1">Tools:</span>
+                                <div id="tool-keywords" class="flex flex-wrap gap-1"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Personal Info Section -->
-                <div class="form-section glass">
-                    <h3>👤 Personal Information</h3>
-                    <div class="form-grid">
-                        <input type="text" id="fullName" placeholder="Full Name" class="form-input">
-                        <input type="email" id="email" placeholder="Email" class="form-input">
-                        <input type="tel" id="phone" placeholder="Phone" class="form-input">
-                        <input type="text" id="location" placeholder="City, State" class="form-input">
-                        <input type="url" id="linkedin" placeholder="LinkedIn URL" class="form-input">
-                        <input type="url" id="github" placeholder="GitHub URL" class="form-input">
+                    <!-- Personal Information -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <h3 class="flex items-center gap-2 text-base font-bold mb-4">
+                            <span class="material-symbols-outlined text-primary text-[20px]">person</span> Personal
+                            Information
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Full
+                                    Name</label>
+                                <input type="text" id="fullName" placeholder="Alexander Hamilton"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Email</label>
+                                <input type="email" id="email" placeholder="alex@example.com"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Phone</label>
+                                <input type="tel" id="phone" placeholder="+1 (555) 123-4567"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Location</label>
+                                <input type="text" id="location" placeholder="New York, NY"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">LinkedIn</label>
+                                <input type="url" id="linkedin" placeholder="linkedin.com/in/username"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">GitHub</label>
+                                <input type="url" id="github" placeholder="github.com/username"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label
+                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Portfolio
+                                    / Website</label>
+                                <input type="url" id="portfolio" placeholder="yourwebsite.com"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Professional
+                                    Summary</label>
+                                <button id="generate-summary-btn"
+                                    class="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
+                                    <span class="material-symbols-outlined text-[14px]">auto_awesome</span> AI Improve
+                                </button>
+                            </div>
+                            <textarea id="summary"
+                                placeholder="Briefly describe your professional background and key achievements..."
+                                rows="3"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                        </div>
                     </div>
-                    <textarea id="summary" placeholder="Professional Summary (AI can generate this)" rows="3"
-                        class="form-input full-width"></textarea>
-                    <button class="btn-sm btn-ai" id="generate-summary-btn">✨ Generate Summary</button>
-                </div>
 
-                <!-- Experience Section -->
-                <div class="form-section glass">
-                    <div class="section-header">
-                        <h3>💼 Experience</h3>
-                        <button class="btn-sm btn-add" id="add-experience-btn">+ Add</button>
+                    <!-- Experience Section -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-base font-bold">
+                                <span class="material-symbols-outlined text-primary text-[20px]">work</span> Experience
+                            </h3>
+                            <button id="add-experience-btn"
+                                class="flex items-center justify-center size-8 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/50 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">add</span>
+                            </button>
+                        </div>
+                        <div id="experience-list"></div>
                     </div>
-                    <div id="experience-list">
-                        <!-- Experience items will be rendered here -->
-                    </div>
-                </div>
 
-                <!-- Education Section -->
-                <div class="form-section glass">
-                    <div class="section-header">
-                        <h3>🎓 Education</h3>
-                        <button class="btn-sm btn-add" id="add-education-btn">+ Add</button>
+                    <!-- Education Section -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-base font-bold">
+                                <span class="material-symbols-outlined text-primary text-[20px]">school</span> Education
+                            </h3>
+                            <button id="add-education-btn"
+                                class="flex items-center justify-center size-8 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/50 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">add</span>
+                            </button>
+                        </div>
+                        <div id="education-list"></div>
                     </div>
-                    <div id="education-list">
-                        <!-- Education items will be rendered here -->
-                    </div>
-                </div>
 
-                <!-- Skills Section -->
-                <div class="form-section glass">
-                    <h3>🛠️ Skills</h3>
-                    <div class="skills-input-group">
-                        <label>Technical Skills</label>
-                        <input type="text" id="technical-skills" placeholder="React, Node.js, Python (comma-separated)"
-                            class="form-input">
+                    <!-- Skills Section -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <h3 class="flex items-center gap-2 text-base font-bold mb-4">
+                            <span class="material-symbols-outlined text-primary text-[20px]">build</span> Skills
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label
+                                    class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Technical
+                                    Skills</label>
+                                <input type="text" id="technical-skills"
+                                    placeholder="React, Node.js, Python (comma-separated)"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Tools
+                                    & Technologies</label>
+                                <input type="text" id="tools-skills" placeholder="Git, Docker, AWS (comma-separated)"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Soft
+                                    Skills</label>
+                                <input type="text" id="soft-skills"
+                                    placeholder="Leadership, Communication, Problem Solving (comma-separated)"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
                     </div>
-                    <div class="skills-input-group">
-                        <label>Tools & Technologies</label>
-                        <input type="text" id="tools-skills" placeholder="Git, Docker, AWS (comma-separated)"
-                            class="form-input">
+
+                    <!-- Projects Section -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-base font-bold">
+                                <span class="material-symbols-outlined text-primary text-[20px]">code</span> Projects
+                            </h3>
+                            <button id="add-project-btn"
+                                class="flex items-center justify-center size-8 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/50 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">add</span>
+                            </button>
+                        </div>
+                        <div id="project-list"></div>
+                    </div>
+
+                    <!-- Certifications Section -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-base font-bold">
+                                <span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+                                Certifications
+                            </h3>
+                            <button id="add-certification-btn"
+                                class="flex items-center justify-center size-8 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/50 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">add</span>
+                            </button>
+                        </div>
+                        <div id="certification-list"></div>
+                    </div>
+
+                    <!-- Languages Section -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-base font-bold">
+                                <span class="material-symbols-outlined text-primary text-[20px]">translate</span>
+                                Languages
+                            </h3>
+                            <button id="add-language-btn"
+                                class="flex items-center justify-center size-8 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/50 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">add</span>
+                            </button>
+                        </div>
+                        <div id="language-list"></div>
+                    </div>
+
+                    <!-- Awards & Achievements Section -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="flex items-center gap-2 text-base font-bold">
+                                <span class="material-symbols-outlined text-primary text-[20px]">emoji_events</span>
+                                Awards & Achievements
+                            </h3>
+                            <button id="add-award-btn"
+                                class="flex items-center justify-center size-8 rounded-lg border border-gray-200 text-gray-500 hover:text-primary hover:border-primary/50 transition-all">
+                                <span class="material-symbols-outlined text-[20px]">add</span>
+                            </button>
+                        </div>
+                        <div id="award-list"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Right Panel: Live Preview -->
-            <div class="preview-panel" id="preview-panel">
-                <div class="preview-header">
-                    <h3>📄 Live Preview</h3>
-                    <button class="btn-sm" id="download-btn">Download PDF</button>
+            <div class="w-[600px] bg-gray-100 border-l border-gray-200 flex flex-col shrink-0" id="preview-panel">
+                <div class="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+                    <h3 class="text-sm font-bold text-gray-700">Live Preview</h3>
                 </div>
-                <div class="resume-preview" id="resume-preview">
-                    <!-- Resume preview will be rendered here -->
-                    <div class="preview-placeholder">
-                        <p>Start filling in your details to see the live preview</p>
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div class="resume-preview bg-white shadow-lg rounded-lg mx-auto" id="resume-preview"
+                        style="width: 100%; min-height: 600px;">
+                        <div class="flex items-center justify-center h-40 text-gray-400 text-sm">
+                            Start filling in your details to see the live preview
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===========================================
-         DASHBOARD
-         =========================================== -->
-    <div class="dashboard-app hidden" id="dashboard-app">
-        <header class="dashboard-header">
-            <div class="dashboard-nav">
-                <div class="logo">CareerForge <span class="pro-badge">Pro</span></div>
-                <div class="header-actions">
-                    <button class="btn-sm btn-ghost" id="dash-builder-btn">+ New Resume</button>
-                    <button class="btn-sm btn-ghost" id="dash-back-btn">← Home</button>
-                    <button class="btn-sm btn-danger" id="dash-logout-btn">Logout</button>
+    <!-- =========================================== DASHBOARD =========================================== -->
+    <div class="hidden min-h-screen flex flex-col" id="dashboard-app">
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="text-primary size-8">
+                        <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z"
+                                fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight">AI Resume Builder</span>
+                </div>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a class="text-sm font-semibold text-primary cursor-pointer" id="dash-tab-resumes">My Resumes</a>
+                    <a class="text-sm font-medium text-gray-600 hover:text-primary transition-colors cursor-pointer"
+                        id="dash-tab-coverletters">Cover Letters</a>
+                    <a class="text-sm font-medium text-gray-600 hover:text-primary transition-colors cursor-pointer"
+                        id="dash-tab-account">Account</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button id="dash-back-btn"
+                        class="text-sm font-medium text-gray-500 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">home</span>
+                    </button>
+                    <button id="upgrade-btn"
+                        class="hidden sm:flex h-9 px-4 items-center justify-center bg-primary/10 text-primary rounded-lg text-sm font-bold hover:bg-primary/20 transition-all">
+                        Upgrade
+                    </button>
+                    <button id="manage-sub-btn"
+                        class="hidden h-9 px-4 items-center justify-center bg-green-100 text-green-700 rounded-lg text-sm font-bold">
+                        Pro Active
+                    </button>
+                    <button id="dash-logout-btn"
+                        class="text-sm font-medium text-gray-500 hover:text-red-500 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">logout</span>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <div class="dashboard-body">
-            <!-- Dashboard Stats -->
-            <div class="dash-stats" id="dash-stats">
-                <div class="stat-card glass">
-                    <div class="stat-icon">📄</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="stat-resumes">0</div>
-                        <div class="stat-label">Resumes</div>
-                    </div>
-                </div>
-                <div class="stat-card glass">
-                    <div class="stat-icon">🎯</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="stat-ats">--</div>
-                        <div class="stat-label">Avg ATS Score</div>
-                    </div>
-                </div>
-                <div class="stat-card glass">
-                    <div class="stat-icon">💌</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="stat-covers">0</div>
-                        <div class="stat-label">Cover Letters</div>
-                    </div>
-                </div>
-                <div class="stat-card glass">
-                    <div class="stat-icon">💎</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="stat-plan">Free</div>
-                        <div class="stat-label">Current Plan</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard Tabs -->
-            <div class="dash-tabs">
-                <button class="dash-tab active" data-tab="resumes">📄 My Resumes</button>
-                <button class="dash-tab" data-tab="coverletters">💌 Cover Letters</button>
-                <button class="dash-tab" data-tab="account">⚙️ Account</button>
-            </div>
+        <main class="flex-grow max-w-7xl mx-auto w-full px-6 py-8">
+            <!-- Dashboard Stats (hidden but functional) -->
+            <div class="hidden"><span id="stat-resumes">0</span><span id="stat-ats">--</span><span
+                    id="stat-covers">0</span><span id="stat-plan">Free</span><span id="sub-plan">Free</span><span
+                    id="sub-status-text"></span></div>
 
             <!-- Resumes Tab -->
-            <div class="dash-content" id="tab-resumes">
-                <div class="dash-grid" id="resume-cards">
-                    <!-- Resume cards will be rendered here -->
-                    <div class="empty-state glass">
-                        <div class="empty-icon">📄</div>
-                        <h3>No Resumes Yet</h3>
-                        <p>Create your first ATS-optimized resume</p>
-                        <button class="btn-primary" id="empty-create-btn">+ Create Resume</button>
+            <div id="tab-resumes" class="dash-content">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <h1 class="text-3xl font-black tracking-tight mb-1">My Resumes</h1>
+                        <p class="text-gray-500">Manage and iterate on your professional applications</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="dash-builder-btn"
+                            class="flex items-center gap-2 h-10 px-4 bg-primary text-white rounded-lg text-sm font-bold shadow-md hover:bg-blue-700 transition-all">
+                            <span class="material-symbols-outlined text-[20px]">add</span> Create New
+                        </button>
+                    </div>
+                </div>
+                <div id="resume-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Resume cards rendered by JS -->
+                    <div id="empty-create-btn" class="group cursor-pointer flex flex-col gap-4" onclick="showBuilder()">
+                        <div
+                            class="w-full aspect-[3/4] bg-white border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-4 transition-all group-hover:border-primary group-hover:bg-primary/5">
+                            <div
+                                class="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary transition-transform group-hover:scale-110">
+                                <span class="material-symbols-outlined text-3xl font-bold">add</span>
+                            </div>
+                            <span class="font-bold text-gray-600 group-hover:text-primary">Create New Resume</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Cover Letters Tab -->
-            <div class="dash-content hidden" id="tab-coverletters">
-                <div class="dash-grid" id="coverletter-cards">
-                    <div class="empty-state glass">
-                        <div class="empty-icon">💌</div>
-                        <h3>No Cover Letters Yet</h3>
-                        <p>Generate your first AI-powered cover letter from the Resume Builder</p>
+            <div id="tab-coverletters" class="dash-content hidden">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <h1 class="text-3xl font-black tracking-tight mb-1">Cover Letters</h1>
+                        <p class="text-gray-500">AI-generated cover letters tailored to each job description</p>
+                    </div>
+                </div>
+                <div id="coverletter-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        class="flex flex-col items-center justify-center p-12 bg-white rounded-xl border border-gray-200">
+                        <span class="material-symbols-outlined text-5xl text-gray-300 mb-4">mail</span>
+                        <h3 class="text-lg font-bold mb-1">No Cover Letters Yet</h3>
+                        <p class="text-sm text-gray-500">Generate from Resume Builder</p>
                     </div>
                 </div>
             </div>
 
             <!-- Account Tab -->
-            <div class="dash-content hidden" id="tab-account">
-                <div class="account-section glass">
-                    <h3>👤 Profile</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" id="account-name" class="form-input" placeholder="Your Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="account-email" class="form-input" placeholder="your@email.com"
-                                readonly>
-                        </div>
-                    </div>
-                    <button class="btn-primary btn-sm" id="save-profile-btn">Save Profile</button>
+            <div id="tab-account" class="dash-content hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-black tracking-tight mb-1">Account Settings</h1>
+                    <p class="text-gray-500">Manage your profile and subscription</p>
                 </div>
-
-                <div class="account-section glass">
-                    <h3>💎 Subscription</h3>
-                    <div id="subscription-info">
-                        <p>Plan: <strong id="sub-plan">Free</strong></p>
-                        <p id="sub-status-text"></p>
+                <div class="max-w-xl space-y-6">
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-base font-bold mb-4">Profile</h3>
+                        <div class="space-y-4">
+                            <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Name</label><input
+                                    type="text" id="account-name"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
+                                    placeholder="Your Name"></div>
+                            <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Email</label><input
+                                    type="email" id="account-email"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
+                                    placeholder="your@email.com" readonly></div>
+                        </div>
+                        <button id="save-profile-btn"
+                            class="mt-4 h-10 px-4 bg-primary text-white rounded-lg text-sm font-bold">Save
+                            Profile</button>
                     </div>
-                    <button class="btn-primary" id="upgrade-btn">Upgrade to Pro — $9/mo</button>
-                    <button class="btn-outline hidden" id="manage-sub-btn">Manage Subscription</button>
                 </div>
             </div>
-        </div>
+        </main>
+
+        <footer class="bg-white border-t border-gray-200 py-8">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <span class="text-sm text-gray-500">© 2024 AI Resume Builder. All rights reserved.</span>
+                <div class="flex items-center gap-6">
+                    <a class="text-xs font-bold text-gray-500 hover:text-primary" href="#">Privacy Policy</a>
+                    <a class="text-xs font-bold text-gray-500 hover:text-primary" href="#">Terms of Service</a>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <!-- ===========================================
-         COVER LETTER MODAL
-         =========================================== -->
-    <div class="modal-overlay hidden" id="cover-letter-modal">
-        <div class="modal glass cover-letter-modal">
-            <button class="modal-close" id="close-cl-modal">&times;</button>
-            <h2>💌 <span class="gradient-text">AI Cover Letter Generator</span></h2>
-
-            <div class="cl-form" id="cl-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Job Title</label>
-                        <input type="text" id="cl-job-title" class="form-input"
-                            placeholder="e.g. Senior Software Engineer">
-                    </div>
-                    <div class="form-group">
-                        <label>Company Name</label>
-                        <input type="text" id="cl-company" class="form-input" placeholder="e.g. Google">
-                    </div>
+    <!-- =========================================== COVER LETTER MODAL =========================================== -->
+    <div class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm hidden flex items-center justify-center"
+        id="cover-letter-modal">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative mx-4">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors"
+                id="close-cl-modal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h2 class="text-2xl font-black mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">mail</span>
+                AI Cover Letter Generator
+            </h2>
+            <div id="cl-form">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Job Title</label><input
+                            type="text" id="cl-job-title"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
+                            placeholder="e.g. Senior Software Engineer"></div>
+                    <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Company Name</label><input
+                            type="text" id="cl-company"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
+                            placeholder="e.g. Google"></div>
                 </div>
-                <div class="form-group">
-                    <label>Job Description</label>
-                    <textarea id="cl-jd" class="form-input" rows="4"
-                        placeholder="Paste the job description..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Tone</label>
-                    <select id="cl-tone" class="form-input">
+                <div class="mb-4"><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Job
+                        Description</label><textarea id="cl-jd"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm resize-none"
+                        rows="4" placeholder="Paste the job description..."></textarea></div>
+                <div class="mb-6"><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Tone</label>
+                    <select id="cl-tone"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm">
                         <option value="professional">Professional</option>
                         <option value="enthusiastic">Enthusiastic</option>
                         <option value="conversational">Conversational</option>
                         <option value="formal">Formal</option>
                     </select>
                 </div>
-                <button class="btn-primary" id="generate-cl-btn">✨ Generate Cover Letter</button>
+                <button id="generate-cl-btn"
+                    class="w-full h-12 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">auto_awesome</span> Generate Cover Letter
+                </button>
             </div>
-
-            <!-- Cover Letter Result -->
-            <div class="cl-result hidden" id="cl-result">
-                <div class="cl-editor">
-                    <div class="cl-section">
-                        <label>Greeting</label>
-                        <input type="text" id="cl-greeting" class="form-input">
-                    </div>
-                    <div class="cl-section">
-                        <label>Opening</label>
-                        <textarea id="cl-opening" class="form-input" rows="3"></textarea>
-                    </div>
-                    <div class="cl-section">
-                        <label>Body</label>
-                        <textarea id="cl-body" class="form-input" rows="6"></textarea>
-                    </div>
-                    <div class="cl-section">
-                        <label>Closing</label>
-                        <textarea id="cl-closing" class="form-input" rows="3"></textarea>
-                    </div>
-                    <div class="cl-section">
-                        <label>Signature</label>
-                        <input type="text" id="cl-signature" class="form-input">
-                    </div>
+            <div class="hidden" id="cl-result">
+                <div class="space-y-4 mb-6">
+                    <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Greeting</label><input
+                            type="text" id="cl-greeting"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm"></div>
+                    <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Opening</label><textarea
+                            id="cl-opening"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm resize-none"
+                            rows="3"></textarea></div>
+                    <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Body</label><textarea
+                            id="cl-body"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm resize-none"
+                            rows="6"></textarea></div>
+                    <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Closing</label><textarea
+                            id="cl-closing"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm resize-none"
+                            rows="3"></textarea></div>
+                    <div><label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Signature</label><input
+                            type="text" id="cl-signature"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm"></div>
                 </div>
-                <div class="cl-actions">
-                    <button class="btn-primary" id="export-cl-pdf-btn">📥 Export PDF</button>
-                    <button class="btn-outline" id="regenerate-cl-btn">🔄 Regenerate</button>
-                    <button class="btn-outline" id="copy-cl-btn">📋 Copy Text</button>
+                <div class="flex gap-3">
+                    <button id="export-cl-pdf-btn"
+                        class="flex-1 h-10 bg-primary text-white rounded-lg text-sm font-bold">📥 Export PDF</button>
+                    <button id="regenerate-cl-btn"
+                        class="h-10 px-4 border border-gray-200 rounded-lg text-sm font-bold hover:bg-gray-50">🔄
+                        Regenerate</button>
+                    <button id="copy-cl-btn"
+                        class="h-10 px-4 border border-gray-200 rounded-lg text-sm font-bold hover:bg-gray-50">📋
+                        Copy</button>
                 </div>
             </div>
-
-            <div class="cl-loading hidden" id="cl-loading">
-                <div class="spinner"></div>
-                <p>Generating your cover letter with AI...</p>
+            <div class="hidden flex-col items-center justify-center py-16" id="cl-loading">
+                <div class="cl-spinner mb-4"></div>
+                <p class="text-gray-500 font-medium">Generating your cover letter with AI...</p>
             </div>
         </div>
     </div>
 
-    <!-- ===========================================
-         AUTH MODAL
-         =========================================== -->
-    <div class="modal-overlay hidden" id="auth-modal">
-        <div class="modal glass auth-modal">
-            <button class="modal-close" id="close-auth-modal">&times;</button>
-
-            <!-- Login Form -->
+    <!-- =========================================== AUTH MODAL =========================================== -->
+    <div class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm hidden flex items-center justify-center"
+        id="auth-modal">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative mx-4">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" id="close-auth-modal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
             <div id="login-form">
-                <h2>Welcome Back</h2>
-                <p class="auth-subtitle">Log in to your CareerForge account</p>
-                <div class="form-group">
-                    <input type="email" id="login-email" class="form-input" placeholder="Email address">
+                <h2 class="text-2xl font-black mb-2">Welcome Back</h2>
+                <p class="text-gray-500 mb-6">Log in to your ResumeAI account</p>
+                <div class="space-y-4 mb-6">
+                    <input type="email" id="login-email"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm"
+                        placeholder="Email address">
+                    <input type="password" id="login-password"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm"
+                        placeholder="Password">
                 </div>
-                <div class="form-group">
-                    <input type="password" id="login-password" class="form-input" placeholder="Password">
-                </div>
-                <button class="btn-primary full-width" id="login-submit-btn">Log In</button>
-                <p class="auth-switch">Don't have an account? <a href="#" id="show-register">Sign up</a></p>
+                <button id="login-submit-btn"
+                    class="w-full h-12 bg-primary text-white rounded-xl font-bold hover:bg-blue-700 transition-all">Log
+                    In</button>
+                <p class="text-center text-sm text-gray-500 mt-4">Don't have an account? <a href="#" id="show-register"
+                        class="text-primary font-bold hover:underline">Sign up</a></p>
             </div>
-
-            <!-- Register Form -->
             <div id="register-form" class="hidden">
-                <h2>Create Account</h2>
-                <p class="auth-subtitle">Start building your perfect resume</p>
-                <div class="form-group">
-                    <input type="text" id="register-name" class="form-input" placeholder="Full Name">
-                </div>
-                <div class="form-group">
-                    <input type="email" id="register-email" class="form-input" placeholder="Email address">
-                </div>
-                <div class="form-group">
-                    <input type="password" id="register-password" class="form-input"
+                <h2 class="text-2xl font-black mb-2">Create Account</h2>
+                <p class="text-gray-500 mb-6">Start building your perfect resume</p>
+                <div class="space-y-4 mb-6">
+                    <input type="text" id="register-name"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm"
+                        placeholder="Full Name">
+                    <input type="email" id="register-email"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm"
+                        placeholder="Email address">
+                    <input type="password" id="register-password"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm"
                         placeholder="Password (min 6 characters)">
                 </div>
-                <button class="btn-primary full-width" id="register-submit-btn">Create Account</button>
-                <p class="auth-switch">Already have an account? <a href="#" id="show-login">Log in</a></p>
+                <button id="register-submit-btn"
+                    class="w-full h-12 bg-primary text-white rounded-xl font-bold hover:bg-blue-700 transition-all">Create
+                    Account</button>
+                <p class="text-center text-sm text-gray-500 mt-4">Already have an account? <a href="#" id="show-login"
+                        class="text-primary font-bold hover:underline">Log in</a></p>
             </div>
         </div>
     </div>
 
-    <!-- ===========================================
-         OPTIMIZATION RESULTS MODAL
-         =========================================== -->
-    <div class="modal-overlay" id="optimization-modal">
-        <div class="modal glass optimization-modal">
-            <button class="modal-close" id="close-optimization-modal">&times;</button>
-            <h2>✨ <span class="gradient-text">Optimization Results</span></h2>
-
-            <div class="score-comparison">
-                <div class="score-box">
-                    <span class="score-label">Before</span>
-                    <span class="score-number" id="before-score">--</span>
+    <!-- =========================================== OPTIMIZATION MODAL =========================================== -->
+    <div class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm hidden flex items-center justify-center"
+        id="optimization-modal">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative mx-4">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-700" id="close-optimization-modal">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h2 class="text-2xl font-black mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">auto_awesome</span> Optimization Results
+            </h2>
+            <div class="flex items-center justify-center gap-6 mb-8 py-4">
+                <div class="text-center">
+                    <span class="block text-xs font-bold text-gray-500 uppercase mb-1">Before</span>
+                    <span class="text-3xl font-black text-gray-400" id="before-score">--</span>
                 </div>
-                <div class="score-arrow">→</div>
-                <div class="score-box improved">
-                    <span class="score-label">After</span>
-                    <span class="score-number" id="after-score">--</span>
+                <span class="material-symbols-outlined text-2xl text-gray-300">arrow_forward</span>
+                <div class="text-center">
+                    <span class="block text-xs font-bold text-gray-500 uppercase mb-1">After</span>
+                    <span class="text-3xl font-black text-primary" id="after-score">--</span>
                 </div>
             </div>
-
-            <div class="optimized-bullets" id="optimized-bullets">
-                <!-- Optimized bullets will be shown here -->
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-primary" id="accept-all-btn">Accept All Changes</button>
-                <button class="btn-outline" id="review-changes-btn">Review Individually</button>
+            <div id="optimized-bullets" class="space-y-3 mb-6"></div>
+            <div class="flex gap-3">
+                <button id="accept-all-btn"
+                    class="flex-1 h-12 bg-primary text-white rounded-xl font-bold hover:bg-blue-700 transition-all">Accept
+                    All Changes</button>
+                <button id="review-changes-btn"
+                    class="h-12 px-6 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-all">Review</button>
             </div>
         </div>
     </div>
 
     <!-- PDF Loading Modal -->
-    <div class="modal-overlay hidden" id="pdf-loading-modal">
-        <div class="modal glass pdf-loading-modal">
-            <div class="spinner large"></div>
-            <h3>Generating Your PDF</h3>
-            <p>Creating a pixel-perfect document...</p>
+    <div class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm hidden flex items-center justify-center"
+        id="pdf-loading-modal">
+        <div class="bg-white rounded-2xl shadow-2xl p-12 text-center mx-4">
+            <div class="cl-spinner mx-auto mb-6"></div>
+            <h3 class="text-lg font-bold mb-2">Generating Your PDF</h3>
+            <p class="text-gray-500">Creating a pixel-perfect document...</p>
         </div>
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container"></div>
+    <div id="toast-container" class="fixed top-4 right-4 z-[200] flex flex-col gap-2"></div>
 
     <script src="app.js"></script>
 </body>
