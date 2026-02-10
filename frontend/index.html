@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Resume Architect - Build ATS-Optimized Resumes</title>
+    <title>CareerForge Pro - ATS-Proof Resume Generator & Job Matcher</title>
     <meta name="description"
-        content="Build ATS-friendly resumes in minutes using advanced artificial intelligence. Stand out from the crowd and land your dream job.">
+        content="Build ATS-friendly resumes in minutes using advanced artificial intelligence. Generate cover letters, download PDFs, and land your dream job.">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -14,14 +14,19 @@
 <body>
     <div class="background-glow"></div>
 
-    <!-- Landing Page -->
+    <!-- ===========================================
+         LANDING PAGE
+         =========================================== -->
     <div class="container" id="landing-page">
         <header>
             <nav>
-                <div class="logo">AI Resume Architect</div>
+                <div class="logo">CareerForge <span class="pro-badge">Pro</span></div>
                 <div class="nav-links">
                     <a href="#features">Features</a>
                     <a href="#how-it-works">How it Works</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#" class="btn-sm btn-ghost" id="nav-dashboard-btn">Dashboard</a>
+                    <a href="#" class="btn-sm btn-ghost" id="nav-login-btn">Log In</a>
                     <a href="#" class="btn-secondary" id="nav-builder-btn">Open Builder</a>
                 </div>
             </nav>
@@ -31,8 +36,8 @@
             <section class="hero">
                 <div class="hero-content">
                     <h1>Craft Your Perfect Career<br>with <span class="gradient-text">AI Precision</span></h1>
-                    <p class="subtitle">Build ATS-friendly resumes in minutes using advanced artificial intelligence.
-                        Stand out from the crowd and land your dream job.</p>
+                    <p class="subtitle">Build ATS-friendly resumes, generate cover letters, and download pixel-perfect
+                        PDFs — all powered by advanced AI.</p>
                     <div class="cta-group">
                         <button class="btn-primary" id="start-btn">
                             <span>✨</span> Get Started Now
@@ -58,6 +63,58 @@
                     <h3>Magic Optimization</h3>
                     <p>One-click optimization that analyzes JD, rewrites bullets, and boosts your score.</p>
                 </div>
+                <div class="feature-card glass">
+                    <div class="icon">📄</div>
+                    <h3>PDF Generation</h3>
+                    <p>Download pixel-perfect, multi-page PDFs that look great on any screen or printer.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon">💌</div>
+                    <h3>Cover Letters</h3>
+                    <p>AI-generated cover letters tailored to each job description with editable templates.</p>
+                </div>
+                <div class="feature-card glass">
+                    <div class="icon">📊</div>
+                    <h3>Dashboard</h3>
+                    <p>Manage all your resumes, track ATS scores, and organize your job search.</p>
+                </div>
+            </section>
+
+            <!-- Pricing Section -->
+            <section class="pricing-section" id="pricing">
+                <h2>Choose Your <span class="gradient-text">Plan</span></h2>
+                <div class="pricing-cards">
+                    <div class="pricing-card glass">
+                        <div class="pricing-tier">Free</div>
+                        <div class="pricing-price">$0<span>/forever</span></div>
+                        <ul class="pricing-features">
+                            <li>✓ 1 Resume</li>
+                            <li>✓ ATS Score Analysis</li>
+                            <li>✓ AI Bullet Rewriting</li>
+                            <li>✓ Live Preview</li>
+                            <li class="disabled">✗ Premium Templates</li>
+                            <li class="disabled">✗ Cover Letters</li>
+                            <li class="disabled">✗ PDF Download</li>
+                        </ul>
+                        <button class="btn-outline" id="free-plan-btn">Current Plan</button>
+                    </div>
+                    <div class="pricing-card glass featured">
+                        <div class="pricing-popular">Most Popular</div>
+                        <div class="pricing-tier">Pro</div>
+                        <div class="pricing-price">$9<span>/month</span></div>
+                        <ul class="pricing-features">
+                            <li>✓ Unlimited Resumes</li>
+                            <li>✓ ATS Score Analysis</li>
+                            <li>✓ AI Bullet Rewriting</li>
+                            <li>✓ Live Preview</li>
+                            <li>✓ Premium Templates</li>
+                            <li>✓ AI Cover Letters</li>
+                            <li>✓ PDF Downloads</li>
+                            <li>✓ Priority Support</li>
+                        </ul>
+                        <button class="btn-primary" id="pro-plan-btn">Upgrade to Pro</button>
+                    </div>
+                </div>
             </section>
 
             <section class="how-it-works" id="how-it-works">
@@ -78,12 +135,19 @@
                         <h3>AI Optimization</h3>
                         <p>Click Magic Button to boost ATS score</p>
                     </div>
+                    <div class="step glass">
+                        <div class="step-number">4</div>
+                        <h3>Download & Apply</h3>
+                        <p>Export PDF and generate cover letter</p>
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Resume Builder App -->
+    <!-- ===========================================
+         RESUME BUILDER APP
+         =========================================== -->
     <div class="builder-app hidden" id="builder-app">
         <!-- Builder Header -->
         <header class="builder-header">
@@ -97,6 +161,12 @@
                         <span class="score-label">ATS Score</span>
                         <span class="score-value" id="ats-score-display">--</span>
                     </div>
+                    <button class="btn-sm btn-ghost" id="cover-letter-btn" title="Generate Cover Letter">
+                        💌 Cover Letter
+                    </button>
+                    <button class="btn-sm btn-ghost" id="download-pdf-btn" title="Download PDF">
+                        📥 PDF
+                    </button>
                     <button class="btn-magic" id="magic-btn">
                         ✨ Magic Optimize
                     </button>
@@ -199,7 +269,235 @@
         </div>
     </div>
 
-    <!-- Optimization Results Modal -->
+    <!-- ===========================================
+         DASHBOARD
+         =========================================== -->
+    <div class="dashboard-app hidden" id="dashboard-app">
+        <header class="dashboard-header">
+            <div class="dashboard-nav">
+                <div class="logo">CareerForge <span class="pro-badge">Pro</span></div>
+                <div class="header-actions">
+                    <button class="btn-sm btn-ghost" id="dash-builder-btn">+ New Resume</button>
+                    <button class="btn-sm btn-ghost" id="dash-back-btn">← Home</button>
+                    <button class="btn-sm btn-danger" id="dash-logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-body">
+            <!-- Dashboard Stats -->
+            <div class="dash-stats" id="dash-stats">
+                <div class="stat-card glass">
+                    <div class="stat-icon">📄</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-resumes">0</div>
+                        <div class="stat-label">Resumes</div>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-ats">--</div>
+                        <div class="stat-label">Avg ATS Score</div>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">💌</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-covers">0</div>
+                        <div class="stat-label">Cover Letters</div>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-icon">💎</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-plan">Free</div>
+                        <div class="stat-label">Current Plan</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tabs -->
+            <div class="dash-tabs">
+                <button class="dash-tab active" data-tab="resumes">📄 My Resumes</button>
+                <button class="dash-tab" data-tab="coverletters">💌 Cover Letters</button>
+                <button class="dash-tab" data-tab="account">⚙️ Account</button>
+            </div>
+
+            <!-- Resumes Tab -->
+            <div class="dash-content" id="tab-resumes">
+                <div class="dash-grid" id="resume-cards">
+                    <!-- Resume cards will be rendered here -->
+                    <div class="empty-state glass">
+                        <div class="empty-icon">📄</div>
+                        <h3>No Resumes Yet</h3>
+                        <p>Create your first ATS-optimized resume</p>
+                        <button class="btn-primary" id="empty-create-btn">+ Create Resume</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cover Letters Tab -->
+            <div class="dash-content hidden" id="tab-coverletters">
+                <div class="dash-grid" id="coverletter-cards">
+                    <div class="empty-state glass">
+                        <div class="empty-icon">💌</div>
+                        <h3>No Cover Letters Yet</h3>
+                        <p>Generate your first AI-powered cover letter from the Resume Builder</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Tab -->
+            <div class="dash-content hidden" id="tab-account">
+                <div class="account-section glass">
+                    <h3>👤 Profile</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="account-name" class="form-input" placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="account-email" class="form-input" placeholder="your@email.com"
+                                readonly>
+                        </div>
+                    </div>
+                    <button class="btn-primary btn-sm" id="save-profile-btn">Save Profile</button>
+                </div>
+
+                <div class="account-section glass">
+                    <h3>💎 Subscription</h3>
+                    <div id="subscription-info">
+                        <p>Plan: <strong id="sub-plan">Free</strong></p>
+                        <p id="sub-status-text"></p>
+                    </div>
+                    <button class="btn-primary" id="upgrade-btn">Upgrade to Pro — $9/mo</button>
+                    <button class="btn-outline hidden" id="manage-sub-btn">Manage Subscription</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         COVER LETTER MODAL
+         =========================================== -->
+    <div class="modal-overlay hidden" id="cover-letter-modal">
+        <div class="modal glass cover-letter-modal">
+            <button class="modal-close" id="close-cl-modal">&times;</button>
+            <h2>💌 <span class="gradient-text">AI Cover Letter Generator</span></h2>
+
+            <div class="cl-form" id="cl-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Job Title</label>
+                        <input type="text" id="cl-job-title" class="form-input"
+                            placeholder="e.g. Senior Software Engineer">
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="cl-company" class="form-input" placeholder="e.g. Google">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Job Description</label>
+                    <textarea id="cl-jd" class="form-input" rows="4"
+                        placeholder="Paste the job description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Tone</label>
+                    <select id="cl-tone" class="form-input">
+                        <option value="professional">Professional</option>
+                        <option value="enthusiastic">Enthusiastic</option>
+                        <option value="conversational">Conversational</option>
+                        <option value="formal">Formal</option>
+                    </select>
+                </div>
+                <button class="btn-primary" id="generate-cl-btn">✨ Generate Cover Letter</button>
+            </div>
+
+            <!-- Cover Letter Result -->
+            <div class="cl-result hidden" id="cl-result">
+                <div class="cl-editor">
+                    <div class="cl-section">
+                        <label>Greeting</label>
+                        <input type="text" id="cl-greeting" class="form-input">
+                    </div>
+                    <div class="cl-section">
+                        <label>Opening</label>
+                        <textarea id="cl-opening" class="form-input" rows="3"></textarea>
+                    </div>
+                    <div class="cl-section">
+                        <label>Body</label>
+                        <textarea id="cl-body" class="form-input" rows="6"></textarea>
+                    </div>
+                    <div class="cl-section">
+                        <label>Closing</label>
+                        <textarea id="cl-closing" class="form-input" rows="3"></textarea>
+                    </div>
+                    <div class="cl-section">
+                        <label>Signature</label>
+                        <input type="text" id="cl-signature" class="form-input">
+                    </div>
+                </div>
+                <div class="cl-actions">
+                    <button class="btn-primary" id="export-cl-pdf-btn">📥 Export PDF</button>
+                    <button class="btn-outline" id="regenerate-cl-btn">🔄 Regenerate</button>
+                    <button class="btn-outline" id="copy-cl-btn">📋 Copy Text</button>
+                </div>
+            </div>
+
+            <div class="cl-loading hidden" id="cl-loading">
+                <div class="spinner"></div>
+                <p>Generating your cover letter with AI...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         AUTH MODAL
+         =========================================== -->
+    <div class="modal-overlay hidden" id="auth-modal">
+        <div class="modal glass auth-modal">
+            <button class="modal-close" id="close-auth-modal">&times;</button>
+
+            <!-- Login Form -->
+            <div id="login-form">
+                <h2>Welcome Back</h2>
+                <p class="auth-subtitle">Log in to your CareerForge account</p>
+                <div class="form-group">
+                    <input type="email" id="login-email" class="form-input" placeholder="Email address">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" class="form-input" placeholder="Password">
+                </div>
+                <button class="btn-primary full-width" id="login-submit-btn">Log In</button>
+                <p class="auth-switch">Don't have an account? <a href="#" id="show-register">Sign up</a></p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="hidden">
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Start building your perfect resume</p>
+                <div class="form-group">
+                    <input type="text" id="register-name" class="form-input" placeholder="Full Name">
+                </div>
+                <div class="form-group">
+                    <input type="email" id="register-email" class="form-input" placeholder="Email address">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="register-password" class="form-input"
+                        placeholder="Password (min 6 characters)">
+                </div>
+                <button class="btn-primary full-width" id="register-submit-btn">Create Account</button>
+                <p class="auth-switch">Already have an account? <a href="#" id="show-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         OPTIMIZATION RESULTS MODAL
+         =========================================== -->
     <div class="modal-overlay" id="optimization-modal">
         <div class="modal glass optimization-modal">
             <button class="modal-close" id="close-optimization-modal">&times;</button>
@@ -225,6 +523,15 @@
                 <button class="btn-primary" id="accept-all-btn">Accept All Changes</button>
                 <button class="btn-outline" id="review-changes-btn">Review Individually</button>
             </div>
+        </div>
+    </div>
+
+    <!-- PDF Loading Modal -->
+    <div class="modal-overlay hidden" id="pdf-loading-modal">
+        <div class="modal glass pdf-loading-modal">
+            <div class="spinner large"></div>
+            <h3>Generating Your PDF</h3>
+            <p>Creating a pixel-perfect document...</p>
         </div>
     </div>
 

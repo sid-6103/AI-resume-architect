@@ -1295,6 +1295,601 @@ textarea.form-input {
 }
 
 /* ============================================
+   PRO BADGE
+   ============================================ */
+
+.pro-badge {
+    font-size: 0.65em;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    padding: 2px 8px;
+    border-radius: 6px;
+    vertical-align: super;
+    letter-spacing: 1px;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+.btn-ghost:hover {
+    color: var(--text-primary);
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.85rem;
+}
+
+.btn-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* ============================================
+   PRICING SECTION
+   ============================================ */
+
+.pricing-section {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.pricing-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 48px;
+}
+
+.pricing-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.pricing-card {
+    padding: 36px 28px;
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-purple);
+}
+
+.pricing-card.featured {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.2);
+}
+
+.pricing-popular {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--gradient-primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pricing-tier {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    margin-top: 20px;
+}
+
+.pricing-price {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pricing-price span {
+    font-size: 1rem;
+    font-weight: 400;
+    -webkit-text-fill-color: var(--text-muted);
+}
+
+.pricing-features {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 28px;
+}
+
+.pricing-features li {
+    padding: 8px 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pricing-features li.disabled {
+    opacity: 0.4;
+}
+
+/* ============================================
+   DASHBOARD STYLES
+   ============================================ */
+
+.dashboard-app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 12px 24px;
+    z-index: 100;
+}
+
+.dashboard-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-body {
+    max-width: 1200px;
+    margin: 80px auto 40px;
+    padding: 0 24px;
+    width: 100%;
+}
+
+/* Dashboard Stats */
+.dash-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-purple);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: var(--radius-md);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Dashboard Tabs */
+.dash-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    padding: 4px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+}
+
+.dash-tab {
+    flex: 1;
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.dash-tab:hover {
+    color: var(--text-primary);
+    background: var(--glass-bg);
+}
+
+.dash-tab.active {
+    background: var(--gradient-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* Dashboard Grid */
+.dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* Resume Card */
+.resume-card {
+    padding: 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.resume-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-purple);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+}
+
+.resume-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.resume-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.resume-card-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.resume-card-status.draft {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--accent-orange);
+}
+
+.resume-card-status.completed {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-green);
+}
+
+.resume-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.resume-card-score {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.resume-card-score .score-pill {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.score-pill.high {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-green);
+}
+
+.score-pill.medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--accent-orange);
+}
+
+.score-pill.low {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.resume-card-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.resume-card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.resume-card-actions button {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.resume-card-actions button:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-purple);
+    background: rgba(139, 92, 246, 0.1);
+}
+
+/* Cover Letter Card */
+.coverletter-card {
+    padding: 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    transition: var(--transition);
+}
+
+.coverletter-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-pink);
+}
+
+.coverletter-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.coverletter-card-company {
+    color: var(--accent-blue);
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.coverletter-card-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.coverletter-card-tone {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(236, 72, 153, 0.15);
+    border: 1px solid rgba(236, 72, 153, 0.3);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--accent-pink);
+    margin-bottom: 16px;
+}
+
+/* Empty State */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 32px;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+/* Account Section */
+.account-section {
+    padding: 28px;
+    margin-bottom: 20px;
+}
+
+.account-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+/* ============================================
+   AUTH MODAL STYLES
+   ============================================ */
+
+.auth-modal {
+    max-width: 420px;
+}
+
+.auth-modal h2 {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.auth-switch a {
+    color: var(--accent-purple);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   COVER LETTER MODAL STYLES
+   ============================================ */
+
+.cover-letter-modal {
+    max-width: 720px;
+}
+
+.cl-form .form-group {
+    margin-bottom: 16px;
+}
+
+.cl-form select.form-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b7b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+.cl-editor {
+    margin-bottom: 20px;
+}
+
+.cl-section {
+    margin-bottom: 16px;
+}
+
+.cl-section label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.cl-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cl-actions button {
+    flex: 1;
+    min-width: 140px;
+}
+
+.cl-loading {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.cl-loading p {
+    margin-top: 16px;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   PDF LOADING MODAL
+   ============================================ */
+
+.pdf-loading-modal {
+    max-width: 360px;
+    text-align: center;
+    padding: 48px 32px;
+}
+
+.pdf-loading-modal h3 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.pdf-loading-modal p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.spinner.large {
+    width: 48px;
+    height: 48px;
+    border-width: 4px;
+    margin: 0 auto;
+}
+
+/* ============================================
    RESPONSIVE DESIGN
    ============================================ */
 
@@ -1346,5 +1941,30 @@ textarea.form-input {
 
     .modal-actions {
         flex-direction: column;
+    }
+
+    .dash-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dash-tabs {
+        flex-wrap: wrap;
+    }
+
+    .dash-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pricing-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .cl-actions {
+        flex-direction: column;
+    }
+
+    .dashboard-nav {
+        flex-wrap: wrap;
+        gap: 12px;
     }
 }

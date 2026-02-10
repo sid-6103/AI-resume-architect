@@ -7,6 +7,8 @@ const {
     bulletDecision,
     generateSummary
 } = require('../controllers/ai');
+const { generateCoverLetter } = require('../controllers/coverLetter');
+const { optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -27,5 +29,8 @@ router.post('/bullet-decision', bulletDecision);
 
 // Generate Summary
 router.post('/summary', generateSummary);
+
+// Cover Letter Generation 
+router.post('/generate-cover-letter', optionalAuth, generateCoverLetter);
 
 module.exports = router;

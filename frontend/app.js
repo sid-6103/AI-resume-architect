@@ -13,6 +13,10 @@
 
 const API_BASE_URL = 'http://localhost:5050/api';
 
+// Auth state (persisted in localStorage)
+let authToken = localStorage.getItem('cf_token') || null;
+let currentUser = JSON.parse(localStorage.getItem('cf_user') || 'null');
+
 // ============================================
 // GLOBAL STATE MANAGEMENT
 // ============================================
@@ -100,16 +104,21 @@ const elements = {
     // Pages
     landingPage: document.getElementById('landing-page'),
     builderApp: document.getElementById('builder-app'),
+    dashboardApp: document.getElementById('dashboard-app'),
 
     // Navigation
     startBtn: document.getElementById('start-btn'),
     demoBtn: document.getElementById('demo-btn'),
     navBuilderBtn: document.getElementById('nav-builder-btn'),
+    navDashboardBtn: document.getElementById('nav-dashboard-btn'),
+    navLoginBtn: document.getElementById('nav-login-btn'),
     backToLanding: document.getElementById('back-to-landing'),
 
     // Builder Header
     atsScoreDisplay: document.getElementById('ats-score-display'),
     magicBtn: document.getElementById('magic-btn'),
+    coverLetterBtn: document.getElementById('cover-letter-btn'),
+    downloadPdfBtn: document.getElementById('download-pdf-btn'),
 
     // JD Section
     jdInput: document.getElementById('jd-input'),
@@ -148,6 +157,42 @@ const elements = {
     optimizedBullets: document.getElementById('optimized-bullets'),
     acceptAllBtn: document.getElementById('accept-all-btn'),
     reviewChangesBtn: document.getElementById('review-changes-btn'),
+
+    // Auth Modal
+    authModal: document.getElementById('auth-modal'),
+    closeAuthModal: document.getElementById('close-auth-modal'),
+    loginForm: document.getElementById('login-form'),
+    registerForm: document.getElementById('register-form'),
+    showRegister: document.getElementById('show-register'),
+    showLogin: document.getElementById('show-login'),
+    loginSubmitBtn: document.getElementById('login-submit-btn'),
+    registerSubmitBtn: document.getElementById('register-submit-btn'),
+
+    // Cover Letter Modal  
+    coverLetterModal: document.getElementById('cover-letter-modal'),
+    closeCLModal: document.getElementById('close-cl-modal'),
+    generateCLBtn: document.getElementById('generate-cl-btn'),
+    clForm: document.getElementById('cl-form'),
+    clResult: document.getElementById('cl-result'),
+    clLoading: document.getElementById('cl-loading'),
+    exportCLPdfBtn: document.getElementById('export-cl-pdf-btn'),
+    regenerateCLBtn: document.getElementById('regenerate-cl-btn'),
+    copyCLBtn: document.getElementById('copy-cl-btn'),
+
+    // PDF Loading Modal
+    pdfLoadingModal: document.getElementById('pdf-loading-modal'),
+
+    // Dashboard
+    dashBuilderBtn: document.getElementById('dash-builder-btn'),
+    dashBackBtn: document.getElementById('dash-back-btn'),
+    dashLogoutBtn: document.getElementById('dash-logout-btn'),
+    resumeCards: document.getElementById('resume-cards'),
+    coverletterCards: document.getElementById('coverletter-cards'),
+    emptyCreateBtn: document.getElementById('empty-create-btn'),
+    saveProfileBtn: document.getElementById('save-profile-btn'),
+    upgradeBtn: document.getElementById('upgrade-btn'),
+    manageSubBtn: document.getElementById('manage-sub-btn'),
+    proPlanBtn: document.getElementById('pro-plan-btn'),
 
     // Toast
     toastContainer: document.getElementById('toast-container')
@@ -189,11 +234,17 @@ function setLoading(element, isLoading) {
 // API CALLS
 // ============================================
 
+function authHeaders() {
+    const headers = { 'Content-Type': 'application/json' };
+    if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+    return headers;
+}
+
 const api = {
     async createResume(data) {
         const res = await fetch(`${API_BASE_URL}/resumes`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify(data)
         });
         return res.json();
@@ -202,7 +253,7 @@ const api = {
     async updateResume(id, data) {
         const res = await fetch(`${API_BASE_URL}/resumes/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify(data)
         });
         return res.json();
@@ -211,7 +262,7 @@ const api = {
     async analyzeJD(jdText, resumeId) {
         const res = await fetch(`${API_BASE_URL}/ai/analyze-jd`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({ jdText, resumeId })
         });
         return res.json();
@@ -220,7 +271,7 @@ const api = {
     async calculateATSScore(resumeId, targetKeywords, resumeData) {
         const res = await fetch(`${API_BASE_URL}/ai/score`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({ resumeId, targetKeywords, resumeData })
         });
         return res.json();
@@ -229,7 +280,7 @@ const api = {
     async rewriteBullet(bulletPoint, keyword, context) {
         const res = await fetch(`${API_BASE_URL}/ai/rewrite`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({ bulletPoint, keyword, context })
         });
         return res.json();
@@ -238,7 +289,7 @@ const api = {
     async optimizeResume(resumeId, jdText) {
         const res = await fetch(`${API_BASE_URL}/ai/optimize`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({ resumeId, jdText })
         });
         return res.json();
@@ -247,8 +298,111 @@ const api = {
     async generateSummary(resumeId, resumeData, targetKeywords) {
         const res = await fetch(`${API_BASE_URL}/ai/summary`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders(),
             body: JSON.stringify({ resumeId, resumeData, targetKeywords })
+        });
+        return res.json();
+    },
+
+    // Auth APIs
+    async register(name, email, password) {
+        const res = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password })
+        });
+        return res.json();
+    },
+
+    async login(email, password) {
+        const res = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        return res.json();
+    },
+
+    async getMe() {
+        const res = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: authHeaders()
+        });
+        return res.json();
+    },
+
+    async updateProfile(data) {
+        const res = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+            method: 'PUT',
+            headers: authHeaders(),
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    },
+
+    // Dashboard APIs
+    async getDashboard() {
+        const res = await fetch(`${API_BASE_URL}/dashboard`, {
+            headers: authHeaders()
+        });
+        return res.json();
+    },
+
+    async deleteResume(id) {
+        const res = await fetch(`${API_BASE_URL}/dashboard/resumes/${id}`, {
+            method: 'DELETE',
+            headers: authHeaders()
+        });
+        return res.json();
+    },
+
+    // Cover Letter APIs  
+    async generateCoverLetter(data) {
+        const res = await fetch(`${API_BASE_URL}/ai/generate-cover-letter`, {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    },
+
+    async getCoverLetters() {
+        const res = await fetch(`${API_BASE_URL}/cover-letter`, {
+            headers: authHeaders()
+        });
+        return res.json();
+    },
+
+    async deleteCoverLetter(id) {
+        const res = await fetch(`${API_BASE_URL}/cover-letter/${id}`, {
+            method: 'DELETE',
+            headers: authHeaders()
+        });
+        return res.json();
+    },
+
+    // PDF APIs
+    async generatePDF(resumeData, templateId) {
+        const res = await fetch(`${API_BASE_URL}/resume/generate-pdf`, {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ resumeData, templateId: templateId || 'professional' })
+        });
+        return res.json();
+    },
+
+    // Subscription APIs
+    async createCheckout(planType) {
+        const res = await fetch(`${API_BASE_URL}/subscription/create-checkout`, {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ planType })
+        });
+        return res.json();
+    },
+
+    async getSubscriptionStatus() {
+        const res = await fetch(`${API_BASE_URL}/subscription/status`, {
+            headers: authHeaders()
         });
         return res.json();
     }
@@ -258,8 +412,15 @@ const api = {
 // PAGE NAVIGATION
 // ============================================
 
-function showBuilder() {
+function hideAllPages() {
     elements.landingPage.classList.add('hidden');
+    elements.builderApp.classList.add('hidden');
+    elements.dashboardApp.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function showBuilder() {
+    hideAllPages();
     elements.builderApp.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 
@@ -274,9 +435,18 @@ function showBuilder() {
 }
 
 function showLanding() {
-    elements.builderApp.classList.add('hidden');
+    hideAllPages();
     elements.landingPage.classList.remove('hidden');
-    document.body.style.overflow = '';
+}
+
+function showDashboard() {
+    if (!authToken) {
+        openAuthModal();
+        return;
+    }
+    hideAllPages();
+    elements.dashboardApp.classList.remove('hidden');
+    loadDashboard();
 }
 
 // ============================================
@@ -1041,6 +1211,430 @@ function render(state) {
 store.subscribe(render);
 
 // ============================================
+// AUTH FUNCTIONS
+// ============================================
+
+function openAuthModal(showRegisterFirst = false) {
+    elements.authModal.classList.remove('hidden');
+    elements.authModal.classList.add('active');
+    if (showRegisterFirst) {
+        elements.loginForm.classList.add('hidden');
+        elements.registerForm.classList.remove('hidden');
+    } else {
+        elements.loginForm.classList.remove('hidden');
+        elements.registerForm.classList.add('hidden');
+    }
+}
+
+function closeAuthModal() {
+    elements.authModal.classList.remove('active');
+    setTimeout(() => elements.authModal.classList.add('hidden'), 300);
+}
+
+async function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    if (!email || !password) { showToast('Please fill in all fields', 'error'); return; }
+
+    setLoading(elements.loginSubmitBtn, true);
+    try {
+        const result = await api.login(email, password);
+        if (result.success) {
+            authToken = result.token;
+            currentUser = result.data || { email };
+            localStorage.setItem('cf_token', authToken);
+            localStorage.setItem('cf_user', JSON.stringify(currentUser));
+            closeAuthModal();
+            updateAuthUI();
+            showToast(`Welcome back, ${currentUser.name || 'User'}!`, 'success');
+        } else {
+            showToast(result.message || 'Login failed', 'error');
+        }
+    } catch (err) {
+        showToast('Login failed. Check backend connection.', 'error');
+    } finally {
+        setLoading(elements.loginSubmitBtn, false);
+    }
+}
+
+async function handleRegister() {
+    const name = document.getElementById('register-name').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+    const password = document.getElementById('register-password').value;
+    if (!name || !email || !password) { showToast('Please fill in all fields', 'error'); return; }
+    if (password.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+
+    setLoading(elements.registerSubmitBtn, true);
+    try {
+        const result = await api.register(name, email, password);
+        if (result.success) {
+            authToken = result.token;
+            currentUser = result.data || { name, email };
+            localStorage.setItem('cf_token', authToken);
+            localStorage.setItem('cf_user', JSON.stringify(currentUser));
+            closeAuthModal();
+            updateAuthUI();
+            showToast(`Welcome, ${name}! Account created successfully.`, 'success');
+        } else {
+            showToast(result.message || 'Registration failed', 'error');
+        }
+    } catch (err) {
+        showToast('Registration failed. Check backend connection.', 'error');
+    } finally {
+        setLoading(elements.registerSubmitBtn, false);
+    }
+}
+
+function handleLogout() {
+    authToken = null;
+    currentUser = null;
+    localStorage.removeItem('cf_token');
+    localStorage.removeItem('cf_user');
+    updateAuthUI();
+    showLanding();
+    showToast('Logged out successfully', 'info');
+}
+
+function updateAuthUI() {
+    const loginBtn = elements.navLoginBtn;
+    const dashBtn = elements.navDashboardBtn;
+    if (authToken && currentUser) {
+        if (loginBtn) { loginBtn.textContent = currentUser.name || 'Profile'; }
+        if (dashBtn) dashBtn.style.display = '';
+    } else {
+        if (loginBtn) loginBtn.textContent = 'Log In';
+        if (dashBtn) dashBtn.style.display = '';
+    }
+}
+
+// ============================================
+// DASHBOARD FUNCTIONS
+// ============================================
+
+async function loadDashboard() {
+    try {
+        const result = await api.getDashboard();
+        if (result.success) {
+            renderDashboardStats(result.data);
+            renderResumeCards(result.data.resumes || []);
+            renderCoverLetterCards(result.data.coverLetters || []);
+            renderAccountTab(result.data.user);
+        } else {
+            showToast(result.message || 'Failed to load dashboard', 'error');
+        }
+    } catch (err) {
+        // Render empty dashboard if API fails
+        renderDashboardStats({ totalResumes: 0, avgATSScore: 0, totalCoverLetters: 0, user: { subscription: { plan: 'free' } } });
+    }
+}
+
+function renderDashboardStats(data) {
+    document.getElementById('stat-resumes').textContent = data.totalResumes || 0;
+    document.getElementById('stat-ats').textContent = data.avgATSScore ? Math.round(data.avgATSScore) + '%' : '--';
+    document.getElementById('stat-covers').textContent = data.totalCoverLetters || 0;
+    document.getElementById('stat-plan').textContent = data.user?.subscription?.plan === 'pro' ? 'Pro' : 'Free';
+}
+
+function renderResumeCards(resumes) {
+    const container = elements.resumeCards;
+    if (!resumes.length) {
+        container.innerHTML = `
+            <div class="empty-state glass">
+                <div class="empty-icon">📄</div>
+                <h3>No Resumes Yet</h3>
+                <p>Create your first ATS-optimized resume</p>
+                <button class="btn-primary" onclick="showBuilder()">+ Create Resume</button>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = resumes.map(r => {
+        const score = r.atsData?.atsScore || 0;
+        const scoreClass = score >= 70 ? 'high' : score >= 40 ? 'medium' : 'low';
+        const date = new Date(r.updatedAt || r.createdAt).toLocaleDateString();
+        return `
+            <div class="resume-card">
+                <div class="resume-card-header">
+                    <div class="resume-card-title">${r.personalInfo?.fullName || 'Untitled Resume'}</div>
+                    <span class="resume-card-status ${r.status || 'draft'}">${r.status || 'draft'}</span>
+                </div>
+                <div class="resume-card-meta">
+                    <div class="resume-card-score">
+                        ATS: <span class="score-pill ${scoreClass}">${score}%</span>
+                    </div>
+                    <span class="resume-card-date">${date}</span>
+                </div>
+                <div class="resume-card-actions">
+                    <button onclick="editResumeFromDashboard('${r._id}')">✏️ Edit</button>
+                    <button onclick="downloadResumeFromDashboard('${r._id}')">📥 PDF</button>
+                    <button onclick="deleteResumeFromDashboard('${r._id}')">🗑 Delete</button>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function renderCoverLetterCards(coverLetters) {
+    const container = elements.coverletterCards;
+    if (!coverLetters.length) {
+        container.innerHTML = `
+            <div class="empty-state glass">
+                <div class="empty-icon">💌</div>
+                <h3>No Cover Letters Yet</h3>
+                <p>Generate your first AI-powered cover letter from the Resume Builder</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = coverLetters.map(cl => {
+        const date = new Date(cl.createdAt).toLocaleDateString();
+        return `
+            <div class="coverletter-card">
+                <div class="coverletter-card-title">${cl.jobTitle || 'Cover Letter'}</div>
+                <div class="coverletter-card-company">${cl.companyName || ''}</div>
+                <div class="coverletter-card-date">${date}</div>
+                <span class="coverletter-card-tone">${cl.tone || 'professional'}</span>
+                <div class="resume-card-actions">
+                    <button onclick="deleteCoverLetterFromDashboard('${cl._id}')">🗑 Delete</button>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function renderAccountTab(user) {
+    if (!user) return;
+    const nameInput = document.getElementById('account-name');
+    const emailInput = document.getElementById('account-email');
+    if (nameInput) nameInput.value = user.name || '';
+    if (emailInput) emailInput.value = user.email || '';
+
+    const plan = user.subscription?.plan || 'free';
+    document.getElementById('sub-plan').textContent = plan === 'pro' ? 'Pro' : 'Free';
+    const statusText = document.getElementById('sub-status-text');
+    if (plan === 'pro') {
+        statusText.textContent = 'Active Pro subscription';
+        elements.upgradeBtn?.classList.add('hidden');
+        elements.manageSubBtn?.classList.remove('hidden');
+    } else {
+        statusText.textContent = '';
+        elements.upgradeBtn?.classList.remove('hidden');
+        elements.manageSubBtn?.classList.add('hidden');
+    }
+}
+
+async function editResumeFromDashboard(resumeId) {
+    try {
+        const res = await fetch(`${API_BASE_URL}/resumes/${resumeId}`, { headers: authHeaders() });
+        const result = await res.json();
+        if (result.success) {
+            const r = result.data;
+            store.setState(s => {
+                s.resumeId = r._id;
+                s.personalInfo = r.personalInfo || s.personalInfo;
+                s.experience = (r.experience || []).map(e => ({ ...e, id: e.id || generateId(), bullets: (e.bullets || []).map(b => ({ ...b, id: b.id || generateId() })) }));
+                s.education = (r.education || []).map(e => ({ ...e, id: e.id || generateId() }));
+                s.skills = r.skills || s.skills;
+                return s;
+            });
+            // Populate form fields
+            const state = store.getState();
+            Object.keys(state.personalInfo).forEach(k => { if (elements[k]) elements[k].value = state.personalInfo[k] || ''; });
+            if (elements.technicalSkills) elements.technicalSkills.value = (state.skills.technical || []).join(', ');
+            if (elements.toolsSkills) elements.toolsSkills.value = (state.skills.tools || []).join(', ');
+            showBuilder();
+        }
+    } catch (err) {
+        showToast('Failed to load resume', 'error');
+    }
+}
+
+async function downloadResumeFromDashboard(resumeId) {
+    showPdfLoading(true);
+    try {
+        const res = await fetch(`${API_BASE_URL}/resumes/${resumeId}`, { headers: authHeaders() });
+        const result = await res.json();
+        if (result.success) {
+            await downloadPDFFromData(result.data);
+        }
+    } catch (err) {
+        showToast('PDF download failed', 'error');
+    } finally {
+        showPdfLoading(false);
+    }
+}
+
+async function deleteResumeFromDashboard(resumeId) {
+    if (!confirm('Delete this resume?')) return;
+    try {
+        await api.deleteResume(resumeId);
+        showToast('Resume deleted', 'success');
+        loadDashboard();
+    } catch (err) {
+        showToast('Failed to delete resume', 'error');
+    }
+}
+
+async function deleteCoverLetterFromDashboard(clId) {
+    if (!confirm('Delete this cover letter?')) return;
+    try {
+        await api.deleteCoverLetter(clId);
+        showToast('Cover letter deleted', 'success');
+        loadDashboard();
+    } catch (err) {
+        showToast('Failed to delete cover letter', 'error');
+    }
+}
+
+// Dashboard tabs
+function initDashboardTabs() {
+    document.querySelectorAll('.dash-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const tabName = tab.dataset.tab;
+            document.querySelectorAll('.dash-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`)?.classList.remove('hidden');
+        });
+    });
+}
+
+// ============================================
+// COVER LETTER FUNCTIONS
+// ============================================
+
+function openCoverLetterModal() {
+    elements.coverLetterModal.classList.remove('hidden');
+    elements.coverLetterModal.classList.add('active');
+    elements.clForm.classList.remove('hidden');
+    elements.clResult.classList.add('hidden');
+    elements.clLoading.classList.add('hidden');
+
+    // Pre-fill from JD if available
+    const state = store.getState();
+    if (state.atsData.targetJD) {
+        document.getElementById('cl-jd').value = state.atsData.targetJD;
+    }
+}
+
+function closeCoverLetterModal() {
+    elements.coverLetterModal.classList.remove('active');
+    setTimeout(() => elements.coverLetterModal.classList.add('hidden'), 300);
+}
+
+async function generateCoverLetter() {
+    const jobTitle = document.getElementById('cl-job-title').value.trim();
+    const companyName = document.getElementById('cl-company').value.trim();
+    const jobDescription = document.getElementById('cl-jd').value.trim();
+    const tone = document.getElementById('cl-tone').value;
+
+    if (!jobDescription) { showToast('Please enter a job description', 'error'); return; }
+
+    // Show loading
+    elements.clForm.classList.add('hidden');
+    elements.clLoading.classList.remove('hidden');
+
+    try {
+        const state = store.getState();
+        const result = await api.generateCoverLetter({
+            resumeData: {
+                personalInfo: state.personalInfo,
+                experience: state.experience,
+                skills: state.skills
+            },
+            jobDescription,
+            jobTitle,
+            companyName,
+            tone
+        });
+
+        if (result.success) {
+            const cl = result.data.content || result.data;
+            document.getElementById('cl-greeting').value = cl.greeting || '';
+            document.getElementById('cl-opening').value = cl.opening || '';
+            document.getElementById('cl-body').value = cl.body || '';
+            document.getElementById('cl-closing').value = cl.closing || '';
+            document.getElementById('cl-signature').value = cl.signature || '';
+
+            elements.clLoading.classList.add('hidden');
+            elements.clResult.classList.remove('hidden');
+            showToast('Cover letter generated!', 'success');
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (err) {
+        elements.clLoading.classList.add('hidden');
+        elements.clForm.classList.remove('hidden');
+        showToast('Cover letter generation failed: ' + (err.message || 'Unknown error'), 'error');
+    }
+}
+
+function getCoverLetterText() {
+    return [
+        document.getElementById('cl-greeting')?.value || '',
+        '',
+        document.getElementById('cl-opening')?.value || '',
+        '',
+        document.getElementById('cl-body')?.value || '',
+        '',
+        document.getElementById('cl-closing')?.value || '',
+        '',
+        document.getElementById('cl-signature')?.value || ''
+    ].join('\n');
+}
+
+function copyCoverLetter() {
+    navigator.clipboard.writeText(getCoverLetterText())
+        .then(() => showToast('Cover letter copied to clipboard!', 'success'))
+        .catch(() => showToast('Failed to copy', 'error'));
+}
+
+// ============================================
+// PDF GENERATION FUNCTIONS
+// ============================================
+
+function showPdfLoading(show) {
+    if (show) {
+        elements.pdfLoadingModal.classList.remove('hidden');
+        elements.pdfLoadingModal.classList.add('active');
+    } else {
+        elements.pdfLoadingModal.classList.remove('active');
+        setTimeout(() => elements.pdfLoadingModal.classList.add('hidden'), 300);
+    }
+}
+
+async function downloadPDF() {
+    const state = store.getState();
+    const hasContent = state.personalInfo.fullName || state.experience.some(e => e.role || e.company);
+    if (!hasContent) {
+        showToast('Please add some content first', 'error');
+        return;
+    }
+    showPdfLoading(true);
+    await downloadPDFFromData(state);
+    showPdfLoading(false);
+}
+
+async function downloadPDFFromData(resumeData) {
+    try {
+        const result = await api.generatePDF(resumeData);
+        if (result.success) {
+            // Trigger download
+            const downloadUrl = `${API_BASE_URL.replace('/api', '')}${result.data.downloadUrl}`;
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = result.data.fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showToast('PDF downloaded!', 'success');
+        } else {
+            showToast(result.message || 'PDF generation failed', 'error');
+        }
+    } catch (err) {
+        showToast('PDF generation failed. Check backend connection.', 'error');
+    }
+}
+
+// ============================================
 // EVENT LISTENERS
 // ============================================
 
@@ -1052,6 +1646,18 @@ elements.demoBtn?.addEventListener('click', () => {
 elements.navBuilderBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     showBuilder();
+});
+elements.navDashboardBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showDashboard();
+});
+elements.navLoginBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (authToken) {
+        showDashboard();
+    } else {
+        openAuthModal();
+    }
 });
 elements.backToLanding?.addEventListener('click', showLanding);
 
@@ -1088,24 +1694,102 @@ elements.closeOptimizationModal?.addEventListener('click', closeOptimizationModa
 elements.acceptAllBtn?.addEventListener('click', acceptAllOptimizations);
 elements.reviewChangesBtn?.addEventListener('click', closeOptimizationModal);
 
-// Download (placeholder)
-elements.downloadBtn?.addEventListener('click', () => {
-    showToast('PDF download coming soon!', 'info');
+// PDF Download buttons
+elements.downloadBtn?.addEventListener('click', downloadPDF);
+elements.downloadPdfBtn?.addEventListener('click', downloadPDF);
+
+// Cover Letter
+elements.coverLetterBtn?.addEventListener('click', openCoverLetterModal);
+elements.closeCLModal?.addEventListener('click', closeCoverLetterModal);
+elements.generateCLBtn?.addEventListener('click', generateCoverLetter);
+elements.regenerateCLBtn?.addEventListener('click', () => {
+    elements.clResult.classList.add('hidden');
+    elements.clForm.classList.remove('hidden');
+});
+elements.copyCLBtn?.addEventListener('click', copyCoverLetter);
+elements.exportCLPdfBtn?.addEventListener('click', () => {
+    showToast('Cover letter PDF export coming soon!', 'info');
 });
 
-// Close modal on overlay click
-elements.optimizationModal?.addEventListener('click', (e) => {
-    if (e.target === elements.optimizationModal) {
-        closeOptimizationModal();
+// Auth Modal
+elements.navLoginBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!authToken) openAuthModal();
+    else showDashboard();
+});
+elements.closeAuthModal?.addEventListener('click', closeAuthModal);
+elements.showRegister?.addEventListener('click', (e) => {
+    e.preventDefault();
+    elements.loginForm.classList.add('hidden');
+    elements.registerForm.classList.remove('hidden');
+});
+elements.showLogin?.addEventListener('click', (e) => {
+    e.preventDefault();
+    elements.registerForm.classList.add('hidden');
+    elements.loginForm.classList.remove('hidden');
+});
+elements.loginSubmitBtn?.addEventListener('click', handleLogin);
+elements.registerSubmitBtn?.addEventListener('click', handleRegister);
+
+// Dashboard
+elements.dashBuilderBtn?.addEventListener('click', showBuilder);
+elements.dashBackBtn?.addEventListener('click', showLanding);
+elements.dashLogoutBtn?.addEventListener('click', handleLogout);
+elements.emptyCreateBtn?.addEventListener('click', showBuilder);
+elements.saveProfileBtn?.addEventListener('click', async () => {
+    const name = document.getElementById('account-name').value.trim();
+    if (!name) { showToast('Name is required', 'error'); return; }
+    try {
+        const result = await api.updateProfile({ name });
+        if (result.success) {
+            currentUser.name = name;
+            localStorage.setItem('cf_user', JSON.stringify(currentUser));
+            updateAuthUI();
+            showToast('Profile updated!', 'success');
+        }
+    } catch (err) {
+        showToast('Failed to update profile', 'error');
     }
+});
+
+// Subscription
+elements.upgradeBtn?.addEventListener('click', async () => {
+    if (!authToken) { openAuthModal(); return; }
+    try {
+        const result = await api.createCheckout('monthly');
+        if (result.success && result.data?.url) {
+            window.location.href = result.data.url;
+        } else {
+            showToast('Stripe not configured. Add your Stripe keys to .env', 'info');
+        }
+    } catch (err) {
+        showToast('Subscription setup not available yet', 'info');
+    }
+});
+elements.proPlanBtn?.addEventListener('click', () => {
+    if (!authToken) { openAuthModal(true); return; }
+    elements.upgradeBtn?.click();
+});
+
+// Close modals on overlay click
+elements.optimizationModal?.addEventListener('click', (e) => {
+    if (e.target === elements.optimizationModal) closeOptimizationModal();
+});
+elements.authModal?.addEventListener('click', (e) => {
+    if (e.target === elements.authModal) closeAuthModal();
+});
+elements.coverLetterModal?.addEventListener('click', (e) => {
+    if (e.target === elements.coverLetterModal) closeCoverLetterModal();
 });
 
 // ============================================
 // INITIALIZATION
 // ============================================
 
-console.log('AI Resume Architect loaded');
+console.log('CareerForge Pro loaded');
 console.log('API:', API_BASE_URL);
 
-// Initial render
+// Initialize
 render(store.getState());
+initDashboardTabs();
+updateAuthUI();
