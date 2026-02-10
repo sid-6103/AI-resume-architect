@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder | CareerForge Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-glow"></div>
+
+    <!-- Resume Builder App -->
+    <div class="builder-app" id="builder-app">
+        <!-- Builder Header -->
+        <header class="builder-header">
+            <div class="builder-nav">
+                <button class="back-btn" onclick="window.location.href='dashboard.html'">
+                    ← Dashboard
+                </button>
+                <div class="logo">Resume Builder</div>
+                <div class="header-actions">
+                    <button class="btn-outline btn-sm" id="logout-btn" style="margin-right: 15px;">
+                        Logout
+                    </button>
+                    <button class="btn-outline btn-sm" id="upgrade-btn" style="margin-right: 15px; display: none;">
+                        ⭐ Upgrade to Pro
+                    </button>
+                    <div class="ats-score-badge" id="ats-badge">
+                        <span class="score-label">ATS Score</span>
+                        <span class="score-value" id="ats-score-display">--</span>
+                    </div>
+                    <button class="btn-magic" id="magic-btn">
+                        ✨ Magic Optimize
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Split Screen Layout -->
+        <div class="builder-container">
+            <!-- Left Panel: Form -->
+            <div class="form-panel" id="form-panel">
+                <!-- JD Input Section -->
+                <div class="form-section glass">
+                    <div class="section-header">
+                        <h3>🎯 Target Job Description</h3>
+                        <button class="btn-sm btn-analyze" id="analyze-jd-btn">Analyze</button>
+                    </div>
+                    <textarea id="jd-input" class="form-input"
+                        placeholder="Paste the job description here to extract keywords and optimize your resume..."
+                        rows="4"></textarea>
+                    <div class="keywords-display hidden" id="keywords-display">
+                        <div class="keyword-category">
+                            <span class="category-label">Technical:</span>
+                            <div class="keyword-tags" id="tech-keywords"></div>
+                        </div>
+                        <div class="keyword-category">
+                            <span class="category-label">Tools:</span>
+                            <div class="keyword-tags" id="tool-keywords"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Info Section -->
+                <div class="form-section glass">
+                    <h3>👤 Personal Information</h3>
+                    <div class="form-grid">
+                        <input type="text" id="fullName" placeholder="Full Name" class="form-input">
+                        <input type="email" id="email" placeholder="Email" class="form-input">
+                        <input type="tel" id="phone" placeholder="Phone" class="form-input">
+                        <input type="text" id="location" placeholder="City, State" class="form-input">
+                        <input type="url" id="linkedin" placeholder="LinkedIn URL" class="form-input">
+                        <input type="url" id="github" placeholder="GitHub URL" class="form-input">
+                        <input type="url" id="portfolio" placeholder="Portfolio/Website URL" class="form-input">
+                    </div>
+                    <textarea id="summary" placeholder="Professional Summary (AI can generate this)" rows="3"
+                        class="form-input full-width"></textarea>
+                    <div class="ai-actions-group" style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn-sm btn-ai" id="generate-summary-btn">✨ Generate Summary</button>
+                        <button class="btn-sm btn-ai" id="generate-cover-letter-btn">📝 Generate Cover Letter</button>
+                    </div>
+                </div>
+
+                <!-- Experience Section -->
+                <div class="form-section glass">
+                    <div class="section-header">
+                        <h3>💼 Experience</h3>
+                        <button class="btn-sm btn-add" id="add-experience-btn">+ Add</button>
+                    </div>
+                    <div id="experience-list">
+                        <!-- Experience items will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Education Section -->
+                <div class="form-section glass">
+                    <div class="section-header">
+                        <h3>🎓 Education</h3>
+                        <button class="btn-sm btn-add" id="add-education-btn">+ Add</button>
+                    </div>
+                    <div id="education-list">
+                        <!-- Education items will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="form-section glass">
+                    <h3>🛠️ Skills</h3>
+                    <div class="skills-input-group">
+                        <label>Technical Skills</label>
+                        <input type="text" id="technical-skills" placeholder="React, Node.js, Python (comma-separated)"
+                            class="form-input">
+                    </div>
+                    <div class="skills-input-group">
+                        <label>Tools & Technologies</label>
+                        <input type="text" id="tools-skills" placeholder="Git, Docker, AWS (comma-separated)"
+                            class="form-input">
+                    </div>
+                </div>
+
+                <!-- Template Selection Section -->
+                <div class="form-section glass">
+                    <h3>🎨 Template Style</h3>
+                    <div class="template-selector">
+                        <div class="template-option active" data-template="professional">
+                            <div class="template-preview professional"></div>
+                            <span>Professional</span>
+                        </div>
+                        <div class="template-option" data-template="minimalist">
+                            <div class="template-preview minimalist"></div>
+                            <span>Minimalist</span>
+                        </div>
+                        <div class="template-option" data-template="compact">
+                            <div class="template-preview compact"></div>
+                            <span>Compact</span>
+                        </div>
+                        <div class="template-option" data-template="classic">
+                            <div class="template-preview classic"></div>
+                            <span>Classic</span>
+                        </div>
+                        <div class="template-option" data-template="modern">
+                            <div class="template-preview modern"></div>
+                            <span>Modern <small>(PRO)</small></span>
+                        </div>
+                        <div class="template-option" data-template="creative">
+                            <div class="template-preview creative"></div>
+                            <span>Creative <small>(PRO)</small></span>
+                        </div>
+                        <div class="template-option" data-template="executive">
+                            <div class="template-preview executive"></div>
+                            <span>Executive <small>(PRO)</small></span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Right Panel: Live Preview -->
+            <div class="preview-panel" id="preview-panel">
+                <div class="preview-header">
+                    <h3>📄 Live Preview</h3>
+                    <button class="btn-sm" id="download-btn">Download PDF</button>
+                </div>
+                <div class="resume-preview" id="resume-preview">
+                    <!-- Resume preview will be rendered here -->
+                    <div class="preview-placeholder">
+                        <p>Start filling in your details to see the live preview</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optimization Results Modal -->
+    <div class="modal-overlay" id="optimization-modal">
+        <div class="modal glass optimization-modal">
+            <button class="modal-close" id="close-optimization-modal">&times;</button>
+            <h2>✨ <span class="gradient-text">Optimization Results</span></h2>
+
+            <div class="score-comparison">
+                <div class="score-box">
+                    <span class="score-label">Before</span>
+                    <span class="score-number" id="before-score">--</span>
+                </div>
+                <div class="score-arrow">→</div>
+                <div class="score-box improved">
+                    <span class="score-label">After</span>
+                    <span class="score-number" id="after-score">--</span>
+                </div>
+            </div>
+
+            <div class="optimized-bullets" id="optimized-bullets">
+                <!-- Optimized bullets will be shown here -->
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="accept-all-btn">Accept All Changes</button>
+                <button class="btn-outline" id="review-changes-btn">Review Individually</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cover Letter Modal -->
+    <div class="modal-overlay" id="cover-letter-modal">
+        <div class="modal glass cover-letter-modal" style="max-width: 800px; padding: 30px;">
+            <button class="modal-close" id="close-cover-letter-modal">&times;</button>
+            <h2>📝 <span class="gradient-text">AI Cover Letter</span></h2>
+
+            <textarea id="cover-letter-text" class="form-input full-width" rows="15"
+                style="font-family: 'Courier New', monospace; line-height: 1.6; margin: 20px 0; font-size: 14px;"></textarea>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="copy-cover-letter-btn">Copy to Clipboard</button>
+                <button class="btn-outline" id="close-cover-letter-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

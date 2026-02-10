@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | CareerForge Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .resumes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .resume-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .resume-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .resume-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .resume-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .resume-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .create-card {
+            border: 2px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            min-height: 200px;
+        }
+
+        .create-card:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .create-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-robot"></i> CareerForge Pro
+        </div>
+        <div class="nav-actions">
+            <div id="userDisplay" class="user-profile">
+                <!-- Injected via JS -->
+            </div>
+            <button id="logoutBtn" class="btn btn-secondary">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div>
+                <h1>My Resumes</h1>
+                <p>Manage and optimize your professional documents</p>
+            </div>
+            <button id="upgradeBtn" class="btn btn-primary" style="display: none;">
+                <i class="fas fa-crown"></i> Upgrade to Pro
+            </button>
+        </div>
+
+        <div id="resumeList" class="resumes-grid">
+            <!-- New Resume Card -->
+            <!-- New Resume Card -->
+            <div class="resume-card create-card" onclick="createNewResume()">
+                <div class="create-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>Create New Resume</h3>
+                <p>Start from scratch or import</p>
+            </div>
+
+            <!-- ATS Checker Card -->
+            <div class="resume-card create-card" onclick="window.location.href='ats-check.html'"
+                style="border-style: solid; border-color: var(--accent-purple); background: rgba(139, 92, 246, 0.05);">
+                <div class="create-icon" style="color: var(--accent-purple);">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>ATS Score Checker</h3>
+                <p>Upload old resume & check score</p>
+                <div class="status-badge"
+                    style="margin-top: 10px; background: rgba(139, 92, 246, 0.2); color: var(--accent-purple);">
+                    ATS DASHBOARD
+                </div>
+            </div>
+
+            <!-- Job Search Card -->
+            <div class="resume-card create-card" onclick="window.location.href='jobs.html'"
+                style="border-style: solid; border-color: var(--accent-green); background: rgba(16, 185, 129, 0.05);">
+                <div class="create-icon" style="color: var(--accent-green);">
+                    <i class="fas fa-search-dollar"></i>
+                </div>
+                <h3>Jobs & Internships</h3>
+                <p>Find your next big opportunity</p>
+                <div class="status-badge"
+                    style="margin-top: 10px; background: rgba(16, 185, 129, 0.2); color: var(--accent-green);">
+                    NEW FEATURE
+                </div>
+            </div>
+
+
+
+
+            <!-- Resumes will be injected here -->
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        // Check Auth
+        const token = localStorage.getItem('careerforge_token');
+        const userStr = localStorage.getItem('careerforge_user');
+
+        if (!token || !userStr) {
+            window.location.href = 'login.html';
+        }
+
+        const user = JSON.parse(userStr);
+
+        // Setup User UI
+        document.getElementById('userDisplay').innerHTML = `
+            <div class="user-avatar">${user.name.charAt(0).toUpperCase()}</div>
+            <span>${user.name}</span>
+            ${user.isPro ? '<span class="status-badge">PRO</span>' : ''}
+        `;
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('careerforge_token');
+            localStorage.removeItem('careerforge_user');
+            window.location.href = 'index.html';
+        });
+
+        // Show Upgrade if free
+        if (!user.isPro) {
+            const upgradeBtn = document.getElementById('upgradeBtn');
+            upgradeBtn.style.display = 'inline-flex';
+            upgradeBtn.addEventListener('click', handleUpgrade);
+        }
+
+        async function fetchResumes() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/resumes`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 401) {
+                    console.warn('Session expired. Logging out.');
+                    localStorage.removeItem('careerforge_token');
+                    localStorage.removeItem('careerforge_user');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const data = await res.json();
+
+                if (data.success) {
+                    renderResumes(data.data);
+                }
+            } catch (err) {
+                console.error('Failed to load resumes', err);
+            }
+        }
+
+
+        function renderResumes(resumes) {
+            const list = document.getElementById('resumeList');
+
+            // Keep the static cards (Create New & ATS Checker)
+            const staticCards = Array.from(list.children).filter(c => c.classList.contains('create-card'));
+            list.innerHTML = '';
+            staticCards.forEach(card => list.appendChild(card));
+
+            if (!resumes || resumes.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.style.gridColumn = '1 / -1';
+                emptyMsg.style.textAlign = 'center';
+                emptyMsg.style.padding = '2rem';
+                emptyMsg.style.color = 'var(--text-muted)';
+                emptyMsg.innerHTML = '<i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i> No resumes found yet. Start by creating one!';
+                list.appendChild(emptyMsg);
+                return;
+            }
+
+            resumes.forEach(resume => {
+                const card = document.createElement('div');
+                card.className = 'resume-card';
+                card.innerHTML = `
+                    <h3>${resume.personalInfo?.fullName || 'Untitled Resume'}</h3>
+                    <p>Modified: ${new Date(resume.updatedAt).toLocaleDateString()}</p>
+                    <div class="status-badge" style="margin-bottom: 1rem;">
+                        ATS Score: ${resume.atsData?.atsScore || 0}%
+                    </div>
+                    <div class="resume-actions">
+                        <button class="btn btn-secondary" onclick="editResume('${resume._id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewPDF('${resume._id}')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                         <button class="btn btn-secondary" onclick="deleteResume('${resume._id}')" style="color: #ef4444;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function createNewResume() {
+            // Check actual resumes (exclude the static action cards)
+            const resumeCount = document.querySelectorAll('.resume-card:not(.create-card)').length;
+            if (!user.isPro && resumeCount >= 1) {
+                showToast('Free tier limit reached (1 resume). Please upgrade for unlimited resumes!', 'error');
+                return;
+            }
+            // Go to builder with no ID
+            window.location.href = 'builder.html';
+        }
+
+
+
+
+
+        function editResume(id) {
+            window.location.href = `builder.html?id=${id}`;
+        }
+
+        function viewPDF(id) {
+            window.open(`${API_BASE_URL}/pdf/generate/${id}?token=${token}`, '_blank');
+            // Note: PDF endpoint needs to support token query param or we need a fetch blob flow
+            // For simplicity, I'll update PDF endpoint to allow token in query param or just rely on fetch
+            // Actually, window.open with bearer header is hard. 
+            // Better: fetch(url, { headers: { Auth } }).then(blob...)
+            // See below implementation
+            downloadPDF(id);
+        }
+
+        async function downloadPDF(id) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/pdf/generate/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed');
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            } catch (e) {
+                alert('Failed to view PDF');
+            }
+        }
+
+        async function deleteResume(id) {
+            if (!confirm('Are you sure?')) return;
+
+            try {
+                await fetch(`${API_BASE_URL}/resumes/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                fetchResumes(); // reload
+            } catch (e) {
+                alert('Failed to delete');
+            }
+        }
+
+        async function handleUpgrade() {
+            // Reuse logic from app.js but simplified
+            const returnUrl = window.location.origin + window.location.pathname.replace(/\/$/, '');
+            try {
+                const res = await fetch(`${API_BASE_URL}/payment/create-checkout-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ planType: 'pro', returnUrl })
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+            } catch (e) {
+                alert('Upgrade failed');
+            }
+        }
+
+        // Toast Function
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = message;
+            container.appendChild(toast);
+
+            // Animation
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            // Remove
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        async function checkPaymentSuccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+
+            if (sessionId) {
+                showToast('Verifying payment and upgrading...', 'info');
+                try {
+                    const res = await fetch(`${API_BASE_URL}/payment/success`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ session_id: sessionId })
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        showToast('Upgrade successful! You are now a PRO member.', 'success');
+                        // Update local user state
+                        user.isPro = true;
+                        localStorage.setItem('careerforge_user', JSON.stringify(user));
+                        // Refresh UI
+                        setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                    }
+                } catch (e) {
+                    console.error('Payment sync failed:', e);
+                }
+            }
+        }
+
+        // Init
+        checkPaymentSuccess();
+        fetchResumes();
+    </script>
+
+
+</body>
+
+</html>

@@ -6,19 +6,17 @@ const {
     updateResume,
     deleteResume
 } = require('../controllers/resumes');
+const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Public routes for Week 1 core development
-router
-    .route('/')
-    .get(getResumes)
-    .post(createResume);
+router.route('/')
+    .get(protect, getResumes)
+    .post(protect, createResume);
 
-router
-    .route('/:id')
-    .get(getResume)
-    .put(updateResume)
-    .delete(deleteResume);
+router.route('/:id')
+    .get(protect, getResume) // Maybe allow public if shared? For now private.
+    .put(protect, updateResume)
+    .delete(protect, deleteResume);
 
 module.exports = router;

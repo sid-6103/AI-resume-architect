@@ -22,19 +22,35 @@ connectDB();
 
 const app = express();
 
-// Body parser
-app.use(express.json());
+// Body parser (Exempt Stripe Webhook from JSON parsing to allow raw body access)
+app.use((req, res, next) => {
+    if (req.originalUrl === '/api/payment/webhook') {
+        next();
+    } else {
+        express.json()(req, res, next);
+    }
+});
+
 
 // Enable CORS
 app.use(cors());
 
 // Route files
+const auth = require('./routes/auth');
 const resumes = require('./routes/resumes');
 const ai = require('./routes/ai');
+const pdf = require('./routes/pdf');
+const payment = require('./routes/payment');
+const jobs = require('./routes/jobs');
 
 // Mount routers
+app.use('/api/auth', auth);
 app.use('/api/resumes', resumes);
 app.use('/api/ai', ai);
+app.use('/api/pdf', pdf);
+app.use('/api/payment', payment);
+app.use('/api/jobs', jobs);
+
 
 const PORT = process.env.PORT || 5000;
 

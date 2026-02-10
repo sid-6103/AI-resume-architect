@@ -1,4 +1,6 @@
+const pdf = require('pdf-parse');
 const model = require('../config/gemini');
+
 const Resume = require('../models/Resume');
 
 /**
@@ -142,6 +144,35 @@ Rules:
 - Focus on value proposition
 
 Respond with ONLY the summary text.
+`,
+
+    generateCoverLetter: (resumeData, jdText) => `
+You are a professional career coach and expert copywriter.
+
+TASK: Write a compelling, personalized cover letter for the following candidate applying to the job described.
+
+CANDIDATE PROFILE:
+- Name: ${resumeData.personalInfo?.fullName || 'Candidate'}
+- Current Role: ${resumeData.experience?.[0]?.role || 'Professional'}
+- Key Skills: ${resumeData.skills?.technical?.join(', ') || 'Various'}
+- Top Achievement: ${resumeData.experience?.[0]?.bullets?.[0]?.original || 'Proven track record of success'}
+
+JOB DESCRIPTION:
+"""
+${jdText?.substring(0, 1000) || 'Standard Industry Role'}
+"""
+
+GUIDELINES:
+1. Professional yet engaging tone.
+2. Structure:
+   - Hook: Express enthusiasm for the specific role/company.
+   - Body Paragraph 1: Highlight relevant experience that matches the JD.
+   - Body Paragraph 2: Showcase soft skills/culture fit.
+   - Closing: Call to action (interview request).
+3. Use placeholders like [Hiring Manager Name] if unknown.
+4. Keep it under 300 words.
+
+Respond with ONLY the cover letter text, no markdown code blocks.
 `
 };
 
@@ -177,16 +208,19 @@ exports.analyzeJD = async (req, res) => {
 
         // If resumeId provided, save to resume
         if (resumeId) {
-            await Resume.findByIdAndUpdate(resumeId, {
-                'atsData.targetJD': jdText,
-                'atsData.extractedKeywords': {
-                    technical: keywords.technicalSkills || [],
-                    tools: keywords.tools || [],
-                    soft: keywords.softSkills || [],
-                    methodologies: keywords.methodologies || []
-                },
-                'atsData.lastAnalyzed': new Date()
-            });
+            const resume = await Resume.findById(resumeId);
+            if (resume && resume.userId.toString() === req.user.id) {
+                await Resume.findByIdAndUpdate(resumeId, {
+                    'atsData.targetJD': jdText,
+                    'atsData.extractedKeywords': {
+                        technical: keywords.technicalSkills || [],
+                        tools: keywords.tools || [],
+                        soft: keywords.softSkills || [],
+                        methodologies: keywords.methodologies || []
+                    },
+                    'atsData.lastAnalyzed': new Date()
+                });
+            }
         }
 
         res.status(200).json({
@@ -263,6 +297,11 @@ exports.calculateATSScore = async (req, res) => {
             if (!resume) {
                 return res.status(404).json({ success: false, message: 'Resume not found' });
             }
+            // Check ownership
+            if (resume.userId.toString() !== req.user.id) {
+                return res.status(401).json({ success: false, message: 'Not authorized' });
+            }
+
             // Use stored keywords if not provided
             if (!keywords && resume.atsData?.extractedKeywords) {
                 keywords = resume.atsData.extractedKeywords;
@@ -471,6 +510,11 @@ exports.optimizeResume = async (req, res) => {
         const resume = await Resume.findById(resumeId);
         if (!resume) {
             return res.status(404).json({ success: false, message: 'Resume not found' });
+        }
+
+        // Check ownership
+        if (resume.userId.toString() !== req.user.id) {
+            return res.status(401).json({ success: false, message: 'Not authorized' });
         }
 
         console.log('🚀 Starting Magic Optimization...');
@@ -781,3 +825,175 @@ exports.generateSummary = async (req, res) => {
         res.status(400).json({ success: false, message: err.message });
     }
 };
+
+// ============================================
+// GENERATE COVER LETTER
+// ============================================
+
+// @desc    Generate AI Cover Letter
+// @route   POST /api/ai/cover-letter
+// @access  Public
+exports.generateCoverLetter = async (req, res) => {
+    try {
+        const { resumeId, resumeData, jdText } = req.body;
+
+        let resume = resumeData;
+        if (resumeId) {
+            resume = await Resume.findById(resumeId);
+            if (!resume) {
+                return res.status(404).json({ success: false, message: 'Resume not found' });
+            }
+        }
+
+        if (!jdText && !resume?.atsData?.targetJD) {
+            return res.status(400).json({ success: false, message: 'Job Description is required' });
+        }
+
+        const targetJD = jdText || resume.atsData.targetJD;
+
+        const result = await model.generateContent(
+            PROMPTS.generateCoverLetter(resume, targetJD)
+        );
+        const response = await result.response;
+        const coverLetter = response.text().trim();
+
+        res.status(200).json({
+            success: true,
+            data: { coverLetter }
+        });
+    } catch (err) {
+        console.error('Cover Letter Error:', err);
+        res.status(400).json({ success: false, message: err.message });
+    }
+};
+
+
+// @desc    Check ATS score for uploaded resume
+// @route   POST /api/ai/check-ats
+// @access  Private
+exports.standaloneATSCheck = async (req, res) => {
+    try {
+        const { jdText } = req.body;
+        const file = req.file;
+
+        console.log('ATS Check Request Received:');
+        console.log('- JD Text Length:', jdText ? jdText.length : 0);
+        console.log('- File:', file ? file.originalname : 'MISSING');
+
+        if (!jdText || !file) {
+            return res.status(400).json({
+                success: false,
+                message: (!jdText && !file) ? 'Missing JD and File' : (!jdText ? 'Missing JD Text' : 'Missing Resume File')
+            });
+        }
+
+
+        // 1. Extract text from PDF
+        let data;
+        try {
+            // pdf-parse v2.4.5+ uses the PDFParse class
+            const { PDFParse } = require('pdf-parse');
+            const uint8Array = new Uint8Array(file.buffer);
+            const parser = new PDFParse(uint8Array);
+            const result = await parser.getText();
+
+            // Robustly extract the text string from the result object
+            let plainText = '';
+            if (typeof result === 'string') {
+                plainText = result;
+            } else if (result && typeof result.text === 'string') {
+                plainText = result.text;
+            } else if (result && typeof result.toString === 'function') {
+                plainText = result.toString();
+            }
+
+            if (!plainText) {
+                throw new Error('No text extracted from PDF. Please check if the file is readable.');
+            }
+            data = { text: plainText };
+        } catch (e) {
+
+            console.error('PDF Parse Internal Error:', e);
+
+            // Fallback for older versions or misconfigured environments
+            try {
+                const parseFn = (typeof pdf === 'function') ? pdf : (pdf.default || pdf);
+                if (typeof parseFn === 'function') {
+                    const fallback = await parseFn(file.buffer);
+                    data = { text: fallback.text };
+                } else {
+                    throw e; // Re-throw if fallback is not available
+                }
+            } catch (fallbackError) {
+                throw new Error(`Failed to parse PDF: ${e.message}`);
+            }
+        }
+
+        const resumeText = data.text.toLowerCase();
+
+
+
+
+        // 2. Analyze JD to get keywords (reusing PROMPTS.analyzeJD)
+        const jdResult = await model.generateContent(PROMPTS.analyzeJD(jdText));
+        const jdResponse = await jdResult.response;
+        const jdJsonText = jdResponse.text().match(/\{[\s\S]*\}/)[0];
+        const keywords = JSON.parse(jdJsonText);
+
+        // 3. Calculate Score
+        const technicalResult = calculateCategoryScore(resumeText, keywords.technicalSkills || []);
+        const toolsResult = calculateCategoryScore(resumeText, keywords.tools || []);
+        const softResult = calculateCategoryScore(resumeText, keywords.softSkills || []);
+        const methodResult = calculateCategoryScore(resumeText, keywords.methodologies || []);
+
+        const finalScore = Math.round(
+            technicalResult.score * WEIGHTS.technical +
+            toolsResult.score * WEIGHTS.tools +
+            softResult.score * WEIGHTS.soft +
+            methodResult.score * WEIGHTS.methodologies
+        );
+
+        const allMatched = [
+            ...technicalResult.matched,
+            ...toolsResult.matched,
+            ...softResult.matched,
+            ...methodResult.matched
+        ];
+        const allMissing = [
+            ...technicalResult.missing,
+            ...toolsResult.missing,
+            ...softResult.missing,
+            ...methodResult.missing
+        ];
+
+        const suggestions = [
+            ...technicalResult.missing.slice(0, 3).map(k => `Add experience with "${k}"`),
+            ...toolsResult.missing.slice(0, 2).map(k => `Mention "${k}" tools`),
+            ...methodResult.missing.slice(0, 2).map(k => `Show expertise in "${k}"`)
+        ].slice(0, 5);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                atsScore: finalScore,
+                breakdown: {
+                    technical: Math.round(technicalResult.score),
+                    tools: Math.round(toolsResult.score),
+                    soft: Math.round(softResult.score),
+                    methodologies: Math.round(methodResult.score)
+                },
+                matchedKeywords: allMatched,
+                missingKeywords: allMissing,
+                suggestions,
+                extractedTextSnippet: resumeText.substring(0, 500) + '...'
+            }
+        });
+    } catch (err) {
+        console.error('Standalone ATS Check Error:', err);
+        res.status(400).json({
+            success: false,
+            message: err.message || 'Failed to check ATS score'
+        });
+    }
+};
+

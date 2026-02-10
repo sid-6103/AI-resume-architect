@@ -147,8 +147,14 @@ const atsDataSchema = new mongoose.Schema({
 
 // Main Resume Schema
 const resumeSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     // Personal Information
     personalInfo: {
+
         fullName: {
             type: String,
             maxlength: [100, 'Name cannot exceed 100 characters']

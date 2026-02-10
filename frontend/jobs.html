@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job & Internship Search | AI Resume Architect</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .search-container {
+            max-width: 1000px;
+            margin: 100px auto 40px;
+            padding: 0 24px;
+        }
+
+        .search-box-wrapper {
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .search-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-green);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .type-toggle {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 5px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+            margin-top: 20px;
+            width: fit-content;
+        }
+
+        .type-btn {
+            padding: 8px 24px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .type-btn.active {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .job-card {
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            gap: 20px;
+        }
+
+        .job-card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .job-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .apply-btn {
+            background: var(--accent-green);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+
+
+        .apply-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .loader-container {
+            text-align: center;
+            padding: 60px;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(16, 185, 129, 0.1);
+            border-top-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .expansion-chips {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            font-size: 0.75rem;
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-glow"></div>
+
+    <header>
+        <nav>
+            <div class="logo" onclick="window.location.href='dashboard.html'" style="cursor: pointer;">AI Resume
+                Architect</div>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="builder.html">Builder</a>
+                <button class="btn-sm" id="logoutBtn">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="search-container">
+        <div class="search-box-wrapper glass">
+            <h2 style="margin-bottom: 24px;">🚀 Find Your Next Opportunity</h2>
+            <div class="search-form">
+                <div class="form-group">
+                    <label for="query">What role are you looking for?</label>
+                    <input type="text" id="query" class="search-input"
+                        placeholder="e.g. Frontend Developer, Data Scientist">
+                </div>
+                <div class="form-group">
+                    <label for="location">Where? (Optional)</label>
+                    <input type="text" id="location" class="search-input" placeholder="e.g. Remote, Berlin, US">
+                </div>
+                <button class="btn-primary" id="searchBtn" style="height: 52px; background: var(--accent-green);">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+
+            <div class="type-toggle">
+                <button class="type-btn active" data-type="job">Jobs</button>
+                <button class="type-btn" data-type="internship">Internships</button>
+            </div>
+
+            <div id="expansionContainer" style="display: none; margin-top: 20px;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+                    <i class="fas fa-magic"></i> AI expanded your search with:
+                </p>
+                <div class="expansion-chips" id="expansionChips"></div>
+            </div>
+        </div>
+
+        <div class="loader-container" id="loader">
+            <div class="loading-spinner"></div>
+            <p>Scanning job boards and expanding keywords...</p>
+        </div>
+
+        <div id="resultsList" class="results-grid">
+            <!-- Initial state -->
+            <div class="no-results">
+                <i class="fas fa-briefcase" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.2;"></i>
+                <p>Enter a role above to start your intelligent search.</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;"></div>
+
+    <script src="app.js"></script>
+    <script>
+        // No need to import, api and showToast are global from app.js
+        let currentType = 'job';
+
+
+        // Auth Check
+        const token = api.getToken();
+        if (!token) window.location.href = 'login.html';
+
+        // UI Elements
+        const queryInput = document.getElementById('query');
+        const locationInput = document.getElementById('location');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsList = document.getElementById('resultsList');
+        const loader = document.getElementById('loader');
+        const expansionContainer = document.getElementById('expansionContainer');
+        const expansionChips = document.getElementById('expansionChips');
+        const typeBtns = document.querySelectorAll('.type-btn');
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('careerforge_token');
+            localStorage.removeItem('careerforge_user');
+            window.location.href = 'index.html';
+        });
+
+        // Type Toggle
+        typeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                typeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentType = btn.dataset.type;
+            });
+        });
+
+        // IP-based Location Detection
+        async function detectLocation() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                if (data.city && data.country_name) {
+                    const loc = `${data.city}, ${data.country_name}`;
+                    locationInput.value = loc;
+                    locationInput.placeholder = `Detected: ${loc}`;
+                    console.log('📍 Location detected:', loc);
+                }
+            } catch (err) {
+                console.warn('Could not detect location automatically');
+            }
+        }
+
+        detectLocation();
+
+
+        async function performSearch() {
+            const query = queryInput.value.trim();
+            const location = locationInput.value.trim();
+
+            if (!query) {
+                showToast('Please enter a role to search', 'error');
+                return;
+            }
+
+            // UI State
+            resultsList.style.display = 'none';
+            loader.style.display = 'block';
+            expansionContainer.style.display = 'none';
+            searchBtn.disabled = true;
+
+            try {
+                // We'll need to add this to app.js
+                const result = await api.searchJobs(query, currentType, location);
+
+                if (result.success) {
+                    renderResults(result.data);
+                    renderExpansion(result.expandedTerms);
+                } else {
+                    showToast(result.message || 'Search failed', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Server error during search', 'error');
+            } finally {
+                loader.style.display = 'none';
+                resultsList.style.display = 'grid';
+                searchBtn.disabled = false;
+            }
+        }
+
+        function renderExpansion(terms) {
+            if (!terms || terms.length === 0) return;
+            expansionChips.innerHTML = terms.map(t => `<span class="chip">${t}</span>`).join('');
+            expansionContainer.style.display = 'block';
+        }
+
+        function renderResults(jobs) {
+            if (!jobs || jobs.length === 0) {
+                resultsList.innerHTML = `
+                    <div class="no-results glass">
+                        <p>No matching jobs found. Try adjusting your search or keywords.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsList.innerHTML = jobs.map(job => `
+                <div class="job-card glass">
+                    <div class="job-info">
+                        <h3 style="font-size: 1.25rem; margin-bottom: 4px; color: var(--text-primary);">${job.title}</h3>
+                        <span class="company-name" style="color: var(--accent-green); font-weight: 600; font-size: 1rem; margin-bottom: 12px; display: block;">${job.company}</span>
+                        <div class="job-meta" style="display: flex; gap: 20px; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">
+                            <span style="display: flex; align-items: center; gap: 6px;"><i class="fas fa-map-marker-alt"></i> ${job.location}</span>
+                            <span style="display: flex; align-items: center; gap: 6px;"><i class="fas fa-clock"></i> ${formatDate(job.createdAt)}</span>
+                            ${job.remote ? '<span style="display: flex; align-items: center; gap: 6px;"><i class="fas fa-globe"></i> Remote</span>' : ''}
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.6;">
+                            ${job.descriptionSnippet}
+                        </p>
+                        <div class="job-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${job.tags.slice(0, 5).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="job-actions" style="flex-shrink: 0;">
+                        <a href="${job.url}" target="_blank" class="apply-btn">
+                            Apply Now <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateStr) {
+            try {
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime()) || date.getFullYear() < 2000) return 'Recently';
+                return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+            } catch (e) {
+                return 'Recently';
+            }
+        }
+
+
+        // Event Listeners
+        searchBtn.addEventListener('click', performSearch);
+        queryInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+    </script>
+</body>
+
+</html>

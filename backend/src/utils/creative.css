@@ -1,0 +1,50 @@
+body {
+    font-family: 'Outfit', sans-serif;
+    color: #2D3748;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 30%;
+    background: #2D3748;
+    color: white;
+    padding: 30px 20px;
+}
+
+.main-content {
+    width: 70%;
+    padding: 30px;
+}
+
+.header h1 {
+    font-size: 32px;
+    color: #4A90E2;
+    margin-bottom: 10px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4A90E2;
+    border-bottom: 2px solid #E2E8F0;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+}
+
+.item-header {
+    font-weight: 600;
+}
+
+.item-sub {
+    color: #718096;
+}
+
+/* Specific layout for PDF generator to handle sidebar */
+.resume-container {
+    display: flex;
+    width: 100%;
+}

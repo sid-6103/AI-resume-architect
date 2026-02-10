@@ -5,13 +5,14 @@
  * - Global state management with reactive updates
  * - Live preview rendering
  * - API integration for AI features
+ * - User Tier Management (Free vs Pro)
  */
 
 // ============================================
 // CONFIGURATION
 // ============================================
 
-const API_BASE_URL = 'http://localhost:5050/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // ============================================
 // GLOBAL STATE MANAGEMENT
@@ -26,6 +27,7 @@ const initialState = {
         location: '',
         linkedin: '',
         github: '',
+        website: '',
         summary: ''
     },
     experience: [],
@@ -40,8 +42,14 @@ const initialState = {
         atsScore: 0,
         matchedKeywords: [],
         missingKeywords: []
-    }
+    },
+    templateId: 'professional',
+    // User State from localStorage
+
+    user: JSON.parse(localStorage.getItem('careerforge_user')) || null,
+    isPro: false
 };
+
 
 // Deep clone helper
 const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
@@ -98,14 +106,9 @@ const store = new StateManager(initialState);
 
 const elements = {
     // Pages
-    landingPage: document.getElementById('landing-page'),
+    // Page Elements (Cleaned up)
     builderApp: document.getElementById('builder-app'),
 
-    // Navigation
-    startBtn: document.getElementById('start-btn'),
-    demoBtn: document.getElementById('demo-btn'),
-    navBuilderBtn: document.getElementById('nav-builder-btn'),
-    backToLanding: document.getElementById('back-to-landing'),
 
     // Builder Header
     atsScoreDisplay: document.getElementById('ats-score-display'),
@@ -125,14 +128,22 @@ const elements = {
     location: document.getElementById('location'),
     linkedin: document.getElementById('linkedin'),
     github: document.getElementById('github'),
+    portfolio: document.getElementById('portfolio'),
     summary: document.getElementById('summary'),
     generateSummaryBtn: document.getElementById('generate-summary-btn'),
+    generateCoverLetterBtn: document.getElementById('generate-cover-letter-btn'),
+
+    // Upgrade
+    upgradeBtn: document.getElementById('upgrade-btn'),
 
     // Sections
     experienceList: document.getElementById('experience-list'),
     educationList: document.getElementById('education-list'),
     addExperienceBtn: document.getElementById('add-experience-btn'),
     addEducationBtn: document.getElementById('add-education-btn'),
+
+    // Templates
+    templateOptions: document.querySelectorAll('.template-option'),
     technicalSkills: document.getElementById('technical-skills'),
     toolsSkills: document.getElementById('tools-skills'),
 
@@ -150,7 +161,14 @@ const elements = {
     reviewChangesBtn: document.getElementById('review-changes-btn'),
 
     // Toast
-    toastContainer: document.getElementById('toast-container')
+    toastContainer: document.getElementById('toast-container'),
+
+    // Cover Letter Modal
+    coverLetterModal: document.getElementById('cover-letter-modal'),
+    closeCoverLetterModal: document.getElementById('close-cover-letter-modal'),
+    coverLetterText: document.getElementById('cover-letter-text'),
+    copyCoverLetterBtn: document.getElementById('copy-cover-letter-btn'),
+    closeCoverLetterBtn: document.getElementById('close-cover-letter-btn')
 };
 
 // ============================================
@@ -190,10 +208,31 @@ function setLoading(element, isLoading) {
 // ============================================
 
 const api = {
+    // Helper to get token
+    getToken() {
+        return localStorage.getItem('careerforge_token');
+    },
+
+    getHeaders() {
+        const token = this.getToken();
+        return {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        };
+    },
+
+    async getResume(id) {
+        const res = await fetch(`${API_BASE_URL}/resumes/${id}`, {
+            headers: this.getHeaders()
+        });
+        return res.json();
+    },
+
     async createResume(data) {
+        // userId is handled by backend token
         const res = await fetch(`${API_BASE_URL}/resumes`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify(data)
         });
         return res.json();
@@ -202,7 +241,7 @@ const api = {
     async updateResume(id, data) {
         const res = await fetch(`${API_BASE_URL}/resumes/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify(data)
         });
         return res.json();
@@ -211,16 +250,17 @@ const api = {
     async analyzeJD(jdText, resumeId) {
         const res = await fetch(`${API_BASE_URL}/ai/analyze-jd`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify({ jdText, resumeId })
         });
         return res.json();
     },
 
     async calculateATSScore(resumeId, targetKeywords, resumeData) {
+        // Ensure resumes ownership is valid in backend or handle 401
         const res = await fetch(`${API_BASE_URL}/ai/score`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify({ resumeId, targetKeywords, resumeData })
         });
         return res.json();
@@ -229,7 +269,7 @@ const api = {
     async rewriteBullet(bulletPoint, keyword, context) {
         const res = await fetch(`${API_BASE_URL}/ai/rewrite`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify({ bulletPoint, keyword, context })
         });
         return res.json();
@@ -238,7 +278,7 @@ const api = {
     async optimizeResume(resumeId, jdText) {
         const res = await fetch(`${API_BASE_URL}/ai/optimize`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify({ resumeId, jdText })
         });
         return res.json();
@@ -247,8 +287,78 @@ const api = {
     async generateSummary(resumeId, resumeData, targetKeywords) {
         const res = await fetch(`${API_BASE_URL}/ai/summary`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify({ resumeId, resumeData, targetKeywords })
+        });
+        return res.json();
+    },
+
+    async generateCoverLetter(resumeId, resumeData, jdText) {
+        const res = await fetch(`${API_BASE_URL}/ai/cover-letter`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify({ resumeId, resumeData, jdText })
+        });
+        return res.json();
+    },
+
+    async checkATS(file, jdText) {
+        const formData = new FormData();
+        formData.append('resume', file);
+        formData.append('jdText', jdText);
+
+        const res = await fetch(`${API_BASE_URL}/ai/check-ats`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.getToken()}`
+            },
+            body: formData
+        });
+        return res.json();
+    },
+
+    async searchJobs(query, type, location) {
+
+        const res = await fetch(`${API_BASE_URL}/jobs/search?query=${encodeURIComponent(query)}&type=${type}&location=${encodeURIComponent(location)}`, {
+            headers: this.getHeaders()
+        });
+        return res.json();
+    },
+
+    async createCheckoutSession() {
+
+        // Redirect to dashboard after success
+        const returnUrl = window.location.origin + '/dashboard.html';
+
+        const res = await fetch(`${API_BASE_URL}/payment/create-checkout-session`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify({ planType: 'pro', returnUrl })
+        });
+        return res.json();
+    },
+
+    getPDFUrl(resumeId) {
+        // Returns URL for direct access - simpler for now if download button is link
+        // But for auth, we might need to fetch blob.
+        // For now, let's keep it as string but we might need a fetch wrapper
+        return `${API_BASE_URL}/pdf/generate/${resumeId}`;
+    },
+
+    async getPDFBlob(resumeId) {
+        const res = await fetch(`${API_BASE_URL}/pdf/generate/${resumeId}`, {
+            headers: this.getHeaders()
+        });
+        if (!res.ok) throw new Error('PDF Failed');
+        return res.blob();
+    },
+
+    async confirmPayment(userId) {
+        // userId might be redundant if using token, but keeping signature
+        const res = await fetch(`${API_BASE_URL}/payment/success`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify({ userId })
         });
         return res.json();
     }
@@ -258,26 +368,8 @@ const api = {
 // PAGE NAVIGATION
 // ============================================
 
-function showBuilder() {
-    elements.landingPage.classList.add('hidden');
-    elements.builderApp.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+// DELETED showBuilder and showLanding (Separate pages now)
 
-    // Initialize with empty experience if none exists
-    const state = store.getState();
-    if (state.experience.length === 0) {
-        addExperience();
-    }
-    if (state.education.length === 0) {
-        addEducation();
-    }
-}
-
-function showLanding() {
-    elements.builderApp.classList.add('hidden');
-    elements.landingPage.classList.remove('hidden');
-    document.body.style.overflow = '';
-}
 
 // ============================================
 // EXPERIENCE MANAGEMENT
@@ -470,6 +562,31 @@ function updateSkills(category, value) {
         return state;
     });
 }
+
+function updateTemplate(templateId) {
+    const state = store.getState();
+    const proTemplates = ['modern', 'creative', 'executive'];
+
+    // If pro template and not pro, show a "Preview Mode" toast
+    if (proTemplates.includes(templateId) && !state.isPro) {
+        showToast(`Previewing ${templateId.charAt(0).toUpperCase() + templateId.slice(1)} (PRO Feature). Upgrade to download!`, 'info');
+    }
+
+    store.setState(state => {
+        state.templateId = templateId;
+        return state;
+    });
+
+    // Update UI active state immediately
+    if (elements.templateOptions) {
+        elements.templateOptions.forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.template === templateId);
+        });
+    }
+}
+
+
+
 
 // ============================================
 // JD ANALYSIS
@@ -941,19 +1058,22 @@ function renderEducationList(education) {
 }
 
 function renderResumePreview(state) {
-    const { personalInfo, experience, education, skills } = state;
+    const { personalInfo, experience, education, skills, templateId } = state;
 
     // Check if there's any content
-    const hasContent = personalInfo.fullName || experience.some(e => e.role || e.company);
+    const hasContent = personalInfo.fullName || experience.some(e => e.role || e.company) || education.some(e => e.school);
 
     if (!hasContent) {
         elements.resumePreview.innerHTML = `
             <div class="preview-placeholder">
-                <p>Start filling in your details to see the live preview</p>
+                <p>Start filling in your details to see the live preview Tag</p>
             </div>
         `;
         return;
     }
+
+    // Set template class on parent for CSS scoping
+    elements.resumePreview.className = `resume-preview template-${templateId || 'professional'}`;
 
     elements.resumePreview.innerHTML = `
         <div class="resume-document">
@@ -963,8 +1083,9 @@ function renderResumePreview(state) {
                     ${personalInfo.email ? `<span>📧 ${personalInfo.email}</span>` : ''}
                     ${personalInfo.phone ? `<span>📱 ${personalInfo.phone}</span>` : ''}
                     ${personalInfo.location ? `<span>📍 ${personalInfo.location}</span>` : ''}
-                    ${personalInfo.linkedin ? `<span>🔗 LinkedIn</span>` : ''}
-                    ${personalInfo.github ? `<span>💻 GitHub</span>` : ''}
+                    ${personalInfo.linkedin ? `<span>🔗 <a href="${personalInfo.linkedin}" target="_blank" rel="noopener">LinkedIn</a></span>` : ''}
+                    ${personalInfo.github ? `<span>💻 <a href="${personalInfo.github}" target="_blank" rel="noopener">GitHub</a></span>` : ''}
+                    ${personalInfo.website ? `<span>🌐 <a href="${personalInfo.website}" target="_blank" rel="noopener">Portfolio</a></span>` : ''}
                 </div>
             </div>
 
@@ -1032,10 +1153,23 @@ function renderResumePreview(state) {
 // ============================================
 
 function render(state) {
-    renderExperienceList(state.experience);
-    renderEducationList(state.education);
-    renderResumePreview(state);
+    if (elements.experienceList) renderExperienceList(state.experience);
+    if (elements.educationList) renderEducationList(state.education);
+    if (elements.resumePreview) renderResumePreview(state);
+
+    // Update ATS Score in header if exists
+    if (elements.atsScoreDisplay) {
+        const score = state.atsData.atsScore || 0;
+        elements.atsScoreDisplay.textContent = score > 0 ? `${score}%` : '--';
+
+        // Color coding
+        const badge = document.getElementById('ats-badge');
+        if (badge) {
+            badge.className = 'ats-score-badge ' + (score > 75 ? 'high' : score > 50 ? 'mid' : 'low');
+        }
+    }
 }
+
 
 // Subscribe to state changes
 store.subscribe(render);
@@ -1044,68 +1178,369 @@ store.subscribe(render);
 // EVENT LISTENERS
 // ============================================
 
-// Navigation
-elements.startBtn?.addEventListener('click', showBuilder);
-elements.demoBtn?.addEventListener('click', () => {
-    showToast('Demo mode coming soon!', 'info');
-});
-elements.navBuilderBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showBuilder();
-});
-elements.backToLanding?.addEventListener('click', showLanding);
+// ============================================
+// COVER LETTER GENERATION
+// ============================================
 
-// JD Analysis
-elements.analyzeJdBtn?.addEventListener('click', analyzeJobDescription);
+async function generateCoverLetter() {
+    const state = store.getState();
 
-// Personal Info inputs
-['fullName', 'email', 'phone', 'location', 'linkedin', 'github', 'summary'].forEach(field => {
-    elements[field]?.addEventListener('input', (e) => {
-        updatePersonalInfo(field, e.target.value);
-    });
-});
-
-// Skills
-elements.technicalSkills?.addEventListener('input', (e) => {
-    updateSkills('technical', e.target.value);
-});
-elements.toolsSkills?.addEventListener('input', (e) => {
-    updateSkills('tools', e.target.value);
-});
-
-// Add buttons
-elements.addExperienceBtn?.addEventListener('click', addExperience);
-elements.addEducationBtn?.addEventListener('click', addEducation);
-
-// Magic Button
-elements.magicBtn?.addEventListener('click', runMagicOptimization);
-
-// Summary Generation
-elements.generateSummaryBtn?.addEventListener('click', generateSummary);
-
-// Optimization Modal
-elements.closeOptimizationModal?.addEventListener('click', closeOptimizationModal);
-elements.acceptAllBtn?.addEventListener('click', acceptAllOptimizations);
-elements.reviewChangesBtn?.addEventListener('click', closeOptimizationModal);
-
-// Download (placeholder)
-elements.downloadBtn?.addEventListener('click', () => {
-    showToast('PDF download coming soon!', 'info');
-});
-
-// Close modal on overlay click
-elements.optimizationModal?.addEventListener('click', (e) => {
-    if (e.target === elements.optimizationModal) {
-        closeOptimizationModal();
+    if (!state.atsData.targetJD) {
+        showToast('Please analyze a job description first', 'error');
+        return;
     }
-});
+
+    setLoading(elements.generateCoverLetterBtn, true);
+
+    try {
+        const result = await api.generateCoverLetter(state.resumeId, state, state.atsData.targetJD);
+
+        if (result.success) {
+            elements.coverLetterText.value = result.data.coverLetter;
+            elements.coverLetterModal.classList.add('active');
+            showToast('Cover Letter generated!', 'success');
+        } else {
+            showToast(result.message || 'Generation failed', 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('Cover Letter generation failed (Backend error)', 'error');
+    } finally {
+        setLoading(elements.generateCoverLetterBtn, false);
+    }
+}
+
+function handleCopyCoverLetter() {
+    elements.coverLetterText.select();
+    document.execCommand('copy');
+    showToast('Copied to clipboard!', 'success');
+}
+
+function closeCoverLetter() {
+    elements.coverLetterModal.classList.remove('active');
+}
+
+// ============================================
+// PDF DOWNLOAD
+// ============================================
+
+async function handleDownloadPDF() {
+    const state = store.getState();
+    const proTemplates = ['modern', 'creative', 'executive'];
+
+    if (!state.resumeId) {
+        showToast('Please create/edit resume first.', 'error');
+        return;
+    }
+
+    // Block download if pro template selected by free user
+    if (proTemplates.includes(state.templateId) && !state.isPro) {
+        showToast('This is a Premium Template. Please upgrade to Pro to download!', 'warning');
+        return;
+    }
+
+    setLoading(elements.downloadBtn, true);
+
+    try {
+        const blob = await api.getPDFBlob(state.resumeId);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `resume-${state.personalInfo.fullName || 'expert'}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        showToast('Download started!', 'success');
+    } catch (err) {
+        console.error(err);
+        showToast('Download failed', 'error');
+    } finally {
+        setLoading(elements.downloadBtn, false);
+    }
+}
+
+function handleLogout() {
+    localStorage.removeItem('careerforge_token');
+    localStorage.removeItem('careerforge_user');
+    window.location.href = 'login.html';
+}
+
+
+// ============================================
+// PAYMENT / UPGRADE
+// ============================================
+
+async function handleUpgrade() {
+    setLoading(elements.upgradeBtn, true);
+    const state = store.getState();
+
+    try {
+        const result = await api.createCheckoutSession();
+        if (result.url) {
+            // Include userId in success URL via backend or local handling
+            // For now, backend handles session creation. 
+            // We just redirect.
+            window.location.href = result.url;
+        } else {
+            showToast('Failed to start checkout', 'error');
+        }
+    } catch (err) {
+        showToast('Payment service unavailable', 'error');
+    } finally {
+        setLoading(elements.upgradeBtn, false);
+    }
+}
+
+// Check for payment success on load
+async function checkPaymentStatus() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
+    if (sessionId) {
+        const state = store.getState();
+        // Call backend to confirm and upgrade user
+        const result = await api.confirmPayment(state.userId);
+
+        if (result.success) {
+            showToast('🎉 Upgrade Successful! You are now a PRO member.', 'success');
+            store.setState({ isPro: true });
+            // Remove query param
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+}
+
+// Run on load
+checkPaymentStatus();
 
 // ============================================
 // INITIALIZATION
 // ============================================
 
-console.log('AI Resume Architect loaded');
-console.log('API:', API_BASE_URL);
 
-// Initial render
-render(store.getState());
+async function init() {
+    // 1. Auth Check (Only if not on landing page)
+    const isLandingPage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
+
+    const token = api.getToken();
+
+    if (!token && !isLandingPage) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // If on landing and has token, maybe redirect to dashboard? 
+    // Let's keep it simple for now as per user request.
+    if (isLandingPage) {
+        // Landing page specific listeners
+        setupLandingListeners();
+        return;
+    }
+
+
+    // 2. Load Resume ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const resumeId = urlParams.get('id');
+
+    if (resumeId) {
+        showToast('Loading your resume...', 'info');
+        try {
+            const result = await api.getResume(resumeId);
+            if (result.success) {
+                // Populate state
+                store.setState({
+                    ...initialState,
+                    resumeId: result.data._id,
+                    personalInfo: result.data.personalInfo || initialState.personalInfo,
+                    experience: result.data.experience || [],
+                    education: result.data.education || [],
+                    skills: result.data.skills || initialState.skills,
+                    atsData: result.data.atsData || initialState.atsData,
+                    templateId: result.data.templateId || 'professional',
+                    isPro: store.getState().user?.isPro || false
+                });
+
+
+                // Update form fields
+                syncFieldsWithState();
+                showToast('Resume loaded!', 'success');
+            } else {
+                showToast('Failed to load resume', 'error');
+            }
+        } catch (err) {
+            showToast('Error loading resume', 'error');
+        }
+    } else {
+        // New Resume
+        if (store.getState().experience.length === 0) addExperience();
+        if (store.getState().education.length === 0) addEducation();
+    }
+
+    // AI Actions
+    elements.analyzeJdBtn?.addEventListener('click', analyzeJobDescription);
+    elements.magicBtn?.addEventListener('click', runMagicOptimization);
+    elements.generateSummaryBtn?.addEventListener('click', generateSummary);
+    elements.generateCoverLetterBtn?.addEventListener('click', generateCoverLetter);
+
+    // PDF 
+    elements.downloadBtn?.addEventListener('click', handleDownloadPDF);
+
+    // Modals
+    elements.closeOptimizationModal?.addEventListener('click', closeOptimizationModal);
+    elements.acceptAllBtn?.addEventListener('click', acceptAllOptimizations);
+    elements.reviewChangesBtn?.addEventListener('click', closeOptimizationModal);
+
+    // Cover Letter Modal
+    elements.closeCoverLetterModal?.addEventListener('click', closeCoverLetter);
+    elements.closeCoverLetterBtn?.addEventListener('click', closeCoverLetter);
+    elements.copyCoverLetterBtn?.addEventListener('click', handleCopyCoverLetter);
+
+    // Navigation
+    document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+
+    // Section Management
+    elements.addExperienceBtn?.addEventListener('click', () => {
+        addExperience();
+        renderExperienceList(store.getState().experience);
+    });
+    elements.addEducationBtn?.addEventListener('click', () => {
+        addEducation();
+        renderEducationList(store.getState().education);
+    });
+
+    // Input Listeners
+    setupInputListeners();
+
+    // Auto Save
+    setupAutoSave();
+
+    // Template Selector
+    elements.templateOptions?.forEach(opt => {
+        opt.addEventListener('click', () => {
+            updateTemplate(opt.dataset.template);
+        });
+    });
+
+    // Initial Render
+    if (elements.resumePreview) {
+        render(store.getState());
+    }
+}
+
+
+
+function syncFieldsWithState() {
+    const s = store.getState();
+    const p = s.personalInfo;
+
+    // Personal Info
+    if (elements.fullName) elements.fullName.value = p.fullName || '';
+    if (elements.email) elements.email.value = p.email || '';
+    if (elements.phone) elements.phone.value = p.phone || '';
+    if (elements.location) elements.location.value = p.location || '';
+    if (elements.linkedin) elements.linkedin.value = p.linkedin || '';
+    if (elements.github) elements.github.value = p.github || '';
+    if (elements.portfolio) elements.portfolio.value = p.website || '';
+    if (elements.summary) elements.summary.value = p.summary || '';
+
+    // Skills
+    if (elements.technicalSkills) elements.technicalSkills.value = (s.skills?.technical || []).join(', ');
+    if (elements.toolsSkills) elements.toolsSkills.value = (s.skills?.tools || []).join(', ');
+
+    // Template Selector
+    if (elements.templateOptions) {
+        elements.templateOptions.forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.template === s.templateId);
+        });
+    }
+
+    // JD
+    if (elements.jdInput) elements.jdInput.value = s.atsData.targetJD || '';
+
+    render(s);
+}
+
+function setupAutoSave() {
+    let timeout;
+    store.subscribe((state) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(async () => {
+            if (state.resumeId) {
+                // Update
+                await api.updateResume(state.resumeId, state);
+            } else {
+                // Create (only if has content)
+                if (state.personalInfo.fullName || state.experience.length > 0) {
+                    const res = await api.createResume(state);
+                    if (res.success) {
+                        store.setState({ resumeId: res.data._id });
+                        // Update URL without reload
+                        const newUrl = window.location.pathname + '?id=' + res.data._id;
+                        window.history.replaceState({ path: newUrl }, '', newUrl);
+                    } else if (res.message && res.message.includes('Limit reached')) {
+                        showToast(res.message, 'error');
+                        // Stop trying to auto-save if limit reached
+                        clearTimeout(timeout);
+                    }
+                }
+            }
+        }, 2000); // Save after 2s of inactivity
+    });
+
+}
+
+function setupInputListeners() {
+    // Personal Info
+    ['fullName', 'email', 'phone', 'location', 'linkedin', 'github', 'website', 'summary'].forEach(id => {
+        if (elements[id]) {
+            elements[id].addEventListener('input', (e) => {
+                updatePersonalInfo(id, e.target.value);
+            });
+        }
+    });
+
+    // Skills
+    if (elements.technicalSkills) {
+        elements.technicalSkills.addEventListener('input', (e) => updateSkills('technical', e.target.value));
+    }
+    if (elements.toolsSkills) {
+        elements.toolsSkills.addEventListener('input', (e) => updateSkills('tools', e.target.value));
+    }
+
+    // Template Selector
+    if (elements.templateOptions) {
+        elements.templateOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                const templateId = opt.dataset.template;
+                updateTemplate(templateId);
+            });
+        });
+    }
+}
+
+
+function setupLandingListeners() {
+    document.getElementById('start-btn')?.addEventListener('click', () => {
+        window.location.href = api.getToken() ? 'dashboard.html' : 'signup.html';
+    });
+    document.getElementById('nav-builder-btn')?.addEventListener('click', () => {
+        window.location.href = api.getToken() ? 'builder.html' : 'login.html';
+    });
+    document.getElementById('demo-btn')?.addEventListener('click', () => {
+        window.location.href = 'signup.html';
+    });
+}
+
+// Start App
+init();
+
+// Assign to window for global access across all pages
+window.api = api;
+window.showToast = showToast;
+window.setLoading = setLoading;
+window.elements = elements;
+window.store = store;
+
+
+

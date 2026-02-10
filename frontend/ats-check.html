@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Checker | CareerForge Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .checker-container {
+            max-width: 900px;
+            margin: 100px auto 40px;
+            padding: 2rem;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            text-align: center;
+            background: var(--glass-bg);
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+        }
+
+        .file-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--accent-green);
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+            display: none;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 8px solid var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+
+        .score-circle.high {
+            border-color: var(--accent-green);
+        }
+
+        .score-circle.mid {
+            border-color: var(--accent-orange);
+        }
+
+        .score-circle.low {
+            border-color: #ef4444;
+        }
+
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .tag-matched {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .tag-missing {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .suggestion-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .suggestion-item i {
+            color: var(--accent-purple);
+            margin-top: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-glow"></div>
+
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo" style="cursor: pointer;" onclick="window.location.href='dashboard.html'">
+                <i class="fas fa-robot"></i> CareerForge Pro
+            </div>
+            <button class="btn-outline btn-sm" onclick="window.location.href='dashboard.html'">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+        </div>
+    </nav>
+
+    <div class="checker-container">
+        <div class="glass" style="padding: 3rem; border-radius: var(--radius-lg);">
+            <h1 style="margin-bottom: 1rem;">ATS Optimization <span class="gradient-text">Checker</span></h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2.5rem;">Upload your existing resume and paste the
+                target job description to see how you rank.</p>
+
+            <div class="form-section">
+                <label style="display: block; margin-bottom: 10px; font-weight: 500;">1. Target Job Description</label>
+                <textarea id="jd-input" class="form-input" placeholder="Paste the job description here..."
+                    style="min-height: 150px; margin-bottom: 2rem;"></textarea>
+            </div>
+
+            <div class="form-section">
+                <label style="display: block; margin-bottom: 10px; font-weight: 500;">2. Upload Resume (PDF)</label>
+                <div class="upload-zone" id="drop-zone">
+                    <input type="file" id="file-input" accept=".pdf" style="display: none;">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3>Click or drag & drop your PDF</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Maximum file size: 5MB</p>
+                    <div id="file-name" class="file-info"></div>
+                </div>
+            </div>
+
+            <button id="check-btn" class="btn-primary" style="width: 100%; justify-content: center; padding: 18px;">
+                <i class="fas fa-search"></i> Run ATS Analysis
+            </button>
+        </div>
+
+        <div id="results-area" class="results-grid">
+            <div class="glass" style="padding: 2rem; text-align: center;">
+                <h3>Overall Match Score</h3>
+                <div id="score-circle" class="score-circle">0%</div>
+                <p id="score-text" style="color: var(--text-secondary);"></p>
+
+                <div style="margin-top: 2rem; text-align: left;">
+                    <h4>🎯 Improvement Suggestions</h4>
+                    <div id="suggestions-list" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+
+            <div class="glass" style="padding: 2rem;">
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--accent-green);">✅ Matched Keywords</h4>
+                    <div id="matched-keywords" class="keyword-list"></div>
+                </div>
+                <div>
+                    <h4 style="color: #ef4444;">❌ Missing Keywords</h4>
+                    <div id="missing-keywords" class="keyword-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+    <script>
+        // Inline UI logic for this page
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+        const checkBtn = document.getElementById('check-btn');
+        let selectedFile = null;
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                fileNameDisplay.textContent = `📄 Selected: ${selectedFile.name}`;
+                fileNameDisplay.style.display = 'block';
+            }
+        };
+
+        // Drag & Drop
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            selectedFile = e.dataTransfer.files[0];
+            if (selectedFile && selectedFile.type === 'application/pdf') {
+                fileNameDisplay.textContent = `📄 Selected: ${selectedFile.name}`;
+                fileNameDisplay.style.display = 'block';
+            } else {
+                showToast('Please upload a PDF file', 'error');
+            }
+        };
+
+        checkBtn.onclick = async () => {
+            const jdText = document.getElementById('jd-input').value;
+            console.log('Running ATS Check...');
+            console.log('- File:', selectedFile ? selectedFile.name : 'NONE');
+            console.log('- JD Text length:', jdText ? jdText.length : 0);
+
+            setLoading(checkBtn, true, 'Analyzing...');
+
+
+            try {
+                const result = await api.checkATS(selectedFile, jdText);
+
+                if (result.success) {
+                    displayResults(result.data);
+                    showToast('Analysis complete!', 'success');
+                } else {
+                    showToast(result.message || 'Analysis failed', 'error');
+                }
+            } catch (err) {
+                console.error('ATS Check Error:', err);
+                showToast('Network error or server unavailable', 'error');
+            } finally {
+                setLoading(checkBtn, false);
+            }
+
+        };
+
+        function displayResults(data) {
+            document.getElementById('results-area').style.display = 'grid';
+            document.getElementById('results-area').scrollIntoView({ behavior: 'smooth' });
+
+            const circle = document.getElementById('score-circle');
+            circle.textContent = `${data.atsScore}%`;
+            circle.className = 'score-circle ' + (data.atsScore > 75 ? 'high' : data.atsScore > 50 ? 'mid' : 'low');
+
+            document.getElementById('score-text').textContent = data.atsScore > 75
+                ? 'Excellent match! Your resume is well-optimized for this role.'
+                : 'Good start, but there is significant room for improvement.';
+
+            // Keywords
+            renderTags('matched-keywords', data.matchedKeywords, 'tag-matched');
+            renderTags('missing-keywords', data.missingKeywords, 'tag-missing');
+
+            // Suggestions
+            const sList = document.getElementById('suggestions-list');
+            sList.innerHTML = data.suggestions.map(s => `
+                <div class="suggestion-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>${s}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderTags(id, tags, className) {
+            const container = document.getElementById(id);
+            container.innerHTML = tags.length > 0
+                ? tags.map(t => `<span class="tag ${className}">${t}</span>`).join('')
+                : '<p style="color: var(--text-muted); font-size: 0.8rem;">None found</p>';
+        }
+
+        // Helper for loading state
+        function setLoading(btn, loading, text) {
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text}`;
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-search"></i> Run ATS Analysis`;
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,11 +1,12 @@
 const Resume = require('../models/Resume');
+const User = require('../models/User');
 
-// @desc    Get all resumes
+// @desc    Get all resumes for current user
 // @route   GET /api/resumes
-// @access  Public
+// @access  Private
 exports.getResumes = async (req, res, next) => {
     try {
-        const resumes = await Resume.find();
+        const resumes = await Resume.find({ userId: req.user.id });
 
         res.status(200).json({
             success: true,
@@ -19,13 +20,18 @@ exports.getResumes = async (req, res, next) => {
 
 // @desc    Get single resume
 // @route   GET /api/resumes/:id
-// @access  Public
+// @access  Private (Changed from Public)
 exports.getResume = async (req, res, next) => {
     try {
         const resume = await Resume.findById(req.params.id);
 
         if (!resume) {
             return res.status(404).json({ success: false, message: 'Resume not found' });
+        }
+
+        // Check ownership
+        if (resume.userId.toString() !== req.user.id) {
+            return res.status(401).json({ success: false, message: 'Not authorized' });
         }
 
         res.status(200).json({
@@ -39,9 +45,29 @@ exports.getResume = async (req, res, next) => {
 
 // @desc    Create new resume
 // @route   POST /api/resumes
-// @access  Public
+// @access  Private
 exports.createResume = async (req, res, next) => {
     try {
+        // req.user is set by protect middleware
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'User not found' });
+        }
+
+        // Check Limits
+        const resumeCount = await Resume.countDocuments({ userId: req.user.id });
+        if (!user.isPro && resumeCount >= 1) {
+            return res.status(403).json({
+                success: false,
+                message: 'Free tier limit reached (1 resume). Please upgrade to Pro for unlimited resumes!'
+            });
+        }
+
+        // Add user to resume
+        req.body.userId = req.user.id;
+
+
         const resume = await Resume.create(req.body);
 
         res.status(201).json({
@@ -68,7 +94,7 @@ const flattenObject = (obj, prefix = '') => {
 
 // @desc    Update resume (Supports Live Preview partial saves)
 // @route   PUT /api/resumes/:id
-// @access  Public
+// @access  Private
 exports.updateResume = async (req, res, next) => {
     try {
         let resume = await Resume.findById(req.params.id);
@@ -77,9 +103,20 @@ exports.updateResume = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Resume not found' });
         }
 
+        // Make sure user owns resume
+        if (!resume.userId || resume.userId.toString() !== req.user.id) {
+            return res.status(401).json({ success: false, message: 'Not authorized to update this resume' });
+        }
+
+        // Clean up request body - don't try to update IDs or internal fields
+        const updateData = { ...req.body };
+        delete updateData._id;
+        delete updateData.userId;
+        delete updateData.resumeId; // Client state ID
+
         // Flatten the request body to use dot notation for nested updates
-        // This ensures personalInfo.fullName doesn't delete personalInfo.email
-        const flattenedUpdate = flattenObject(req.body);
+        const flattenedUpdate = flattenObject(updateData);
+
 
         resume = await Resume.findByIdAndUpdate(req.params.id,
             { $set: flattenedUpdate },
@@ -100,13 +137,18 @@ exports.updateResume = async (req, res, next) => {
 
 // @desc    Delete resume
 // @route   DELETE /api/resumes/:id
-// @access  Public
+// @access  Private
 exports.deleteResume = async (req, res, next) => {
     try {
         const resume = await Resume.findById(req.params.id);
 
         if (!resume) {
             return res.status(404).json({ success: false, message: 'Resume not found' });
+        }
+
+        // Make sure user owns resume
+        if (resume.userId.toString() !== req.user.id) {
+            return res.status(401).json({ success: false, message: 'Not authorized to delete this resume' });
         }
 
         await resume.deleteOne();
